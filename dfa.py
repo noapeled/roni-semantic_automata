@@ -44,7 +44,11 @@ class DFA:
         """
         curr_state = self.initial
         for letter in word:
-            curr_state = self.transitions[curr_state][letter]
+            try:
+                curr_state = self.transitions[curr_state][letter]
+            except KeyError:
+                # If no transition is defined for the current state and letter, then the DFA rejects the word.
+                return False
         return curr_state in self.accepting
 
     def plot_transitions(self, graph_name=''):
@@ -68,23 +72,26 @@ class DFA:
 
         dot.render(graph_name + '.gv')
 
+    def reaches_qf(self, state):
+        return bool(self.transitions.get(state, {}).get('#'))
+
     def encode(self):
         forward_transition_letter = '1' if self.transitions[self.initial]['0'] == self.initial else '0'
         encoding = forward_transition_letter
         current_state = self.initial
         for i in range(len(self.states)):
-            encoding += '1' if current_state in self.accepting else '0'
+            encoding += '1' if self.reaches_qf(current_state) else '0'
             current_state = self.transitions[current_state][forward_transition_letter]
         return encoding
 
     def encode_positive_example(self, word):
         encoding = ''
         curr_state = self.initial
-        letter_encoding_in_accepting_states = {'0': '00', '1': '10', '#': '11'}
+        letter_encoding_in_state_which_reaches_qf = {'0': '00', '1': '10', '#': '11'}
         for letter in word:
             encoding += letter \
-                if curr_state not in self.accepting \
-                else letter_encoding_in_accepting_states[letter]
+                if not self.reaches_qf(curr_state) \
+                else letter_encoding_in_state_which_reaches_qf[letter]
             curr_state = self.transitions[curr_state][letter]
         return encoding
 

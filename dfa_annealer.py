@@ -12,10 +12,10 @@ class DFA_Annealer:
         """
         Returns a DFA that accepts all strings
         """
-        states = {'q0'}
-        transitions = {'q0':{'0': 'q0', '1': 'q0'}}
+        states = {'q0', 'qF'}
+        transitions = {'q0':{'0': 'q0', '1': 'q0', '#': 'qF'}}
         initial_state = 'q0'
-        accepting_states = {'q0'}
+        accepting_states = {'qF'}
         return DFA(states, transitions, initial_state, accepting_states)
 
     def compare_energy(self, dfa_a, dfa_b, positive_examples):
@@ -65,9 +65,9 @@ class DFA_Annealer:
         @return new_DFA: DFA with n+1 states
         """
         # finding final state of given DFA
-        prev_final_state = "q"+str(len(dfa.states)-1)
+        prev_final_state = "q"+str(len(dfa.states) - 2)
         # finding final state of new DFA
-        new_final_state = "q"+str(len(dfa.states))
+        new_final_state = "q" + str(len(dfa.states) - 1)
         # Building new DFA
         new_states = dfa.states | {new_final_state} # Adding new final state
         new_transitions = deepcopy(dfa.transitions)
@@ -79,10 +79,9 @@ class DFA_Annealer:
         new_transitions[new_final_state]['0'] = new_final_state
         new_transitions[new_final_state]['1'] = new_final_state
         # new final state will agree with acceptance of prev final state
-        new_accepting = dfa.accepting
-        if prev_final_state in dfa.accepting:
-            new_accepting = new_accepting | {new_final_state}
-
+        if dfa.reaches_qf(prev_final_state):
+            new_transitions[new_final_state]['#'] = 'qF'
+        new_accepting = deepcopy(dfa.accepting)
         new_dfa = DFA(new_states, new_transitions, 'q0', new_accepting)
         print(new_dfa)
         return new_dfa
@@ -94,11 +93,11 @@ class DFA_Annealer:
         @return new_DFA: DFA with n-1 states
         """
         # Getting q_n of given DFA
-        prev_final_state = "q"+str(len(dfa.states)-1)
+        prev_final_state = "q"+str(len(dfa.states) - 2)
         # Removing q_n from states
         new_states = dfa.states - {prev_final_state}
         # Getting q_n of new DFA
-        new_final_state = "q"+str(len(new_states)-1)
+        new_final_state = "q"+str(len(new_states)-2)
         # Deleting transitions associated with q_n from transitions
         new_transitions = deepcopy(dfa.transitions)
         new_transitions[new_final_state]['0'] = new_final_state
@@ -117,7 +116,7 @@ class DFA_Annealer:
         new_accepting = deepcopy(dfa.accepting)
         # Changing transitions
         new_transitions = deepcopy(dfa.transitions)
-        for state in new_transitions:
+        for state in new_states - {'qF'}:
             state_trans = new_transitions[state]
             state_trans['0'], state_trans['1'] = state_trans['1'], state_trans['0']
         new_dfa = DFA(new_states, new_transitions, new_initial, new_accepting)
@@ -136,23 +135,24 @@ class DFA_Annealer:
         @param DFA: DFA with n states and x accpeting states
         @return new_DFA: DFA with n and x+1 or x-1 accepting states, depanding on random choice
         """
-        accepting_ints = [int(state[1:]) for state in dfa.accepting]
+        accepting_ints = [int(state[1:]) for state in dfa.states if dfa.reaches_qf(state)]
         refer_state = random.choice(['first_acc', 'last_acc'])
         size_change = random.choice(['increase', 'decrease'])
+        new_transitions = deepcopy(dfa.transitions)
         if refer_state == 'first_acc':
             min_acc_index = min(accepting_ints)
             if size_change == 'decrease' or min_acc_index == 0:
-                new_accepting = dfa.accepting - {'q' + str(min_acc_index)}
+                new_transitions['q' + str(min_acc_index)].pop('#')
             else:
-                new_accepting = dfa.accepting | {'q' + str(min_acc_index-1)}
+                new_transitions['q' + str(min_acc_index - 1)]['#'] = 'qF'
         else:
             max_acc_index = max(accepting_ints)
-            if size_change == 'decrease' or max_acc_index == len(dfa.states)-1:
-                new_accepting = dfa.accepting - {'q' + str(max_acc_index)}
+            if size_change == 'decrease' or max_acc_index == len(dfa.states) - 2:
+                new_transitions['q' + str(max_acc_index)].pop('#')
             else:
-                new_accepting = dfa.accepting | {'q' + str(max_acc_index+1)}
+                new_transitions['q' + str(max_acc_index + 1)]['#'] = 'qF'
 
-        new_dfa = DFA(deepcopy(dfa.states), deepcopy(dfa.transitions), 'q0' , new_accepting)
+        new_dfa = DFA(deepcopy(dfa.states), new_transitions, 'q0' , deepcopy(dfa.accepting))
         print(new_dfa)
         return new_dfa
 
@@ -165,7 +165,7 @@ class DFA_Annealer:
         If one of the above doesn't hold, None is returned. Otherwise, the chosen neighbor is returned.
         """
         print("Random neighbor to be checked:", chosen_option.__name__) 
-        if len(dfa.states)==1 and chosen_option==self.__remove_final_state:
+        if len(dfa.states) <= 2 and chosen_option==self.__remove_final_state:
             print("Neigbor will cause dfa to have 0 states.")
             return None
         neighbor = chosen_option(dfa)

@@ -27,4 +27,4 @@ class Relation:
                 bianry_representation += "1"
             else:
                 bianry_representation += "0"
-        return bianry_representation
+        return bianry_representation + '#'
