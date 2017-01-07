@@ -27,12 +27,14 @@ class Simulated_annealing_learner:
         """
         iter_counter = 0 
         p = None
+        positive_examples = [Relation(i,j).get_bianry_representation()
+                             for i,j in self.data]
         while self.T > threshold:
             iter_counter += 1 
             print ("# ITERATION COUNTER =" , iter_counter)
             print ("Current temperature:", self.T)
             H_tag = self.annealer.get_random_neighbor(self.hyp, self.data)
-            delta = self.annealer.compare_energy(H_tag, self.hyp)
+            delta = self.annealer.compare_energy(H_tag, self.hyp, positive_examples)
             print("Delta =", delta)
             if delta < 0:
                 p = 1

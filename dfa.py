@@ -1,6 +1,7 @@
 """
 A class representing a Deterministic Finite Automaton (DFA) over any finite alphabet.
 """
+import os
 
 from graphviz import Digraph
 
@@ -48,7 +49,11 @@ class DFA:
 
     def plot_transitions(self, graph_name=''):
         # Requires graphviz executables to be installed.
-        dot = Digraph(comment=graph_name, format='png', name=graph_name, directory='figures', graph_attr={'rankdir': 'LR'})
+        dot = Digraph(comment=graph_name,
+                      format='png',
+                      name=graph_name,
+                      directory=os.path.join('..', 'figures'),
+                      graph_attr={'rankdir': 'LR'})
         dot.node(graph_name, shape='square')
 
         for state in self.states:
@@ -62,6 +67,27 @@ class DFA:
                 dot.edge(source_state, target_state, label=letter)
 
         dot.render(graph_name + '.gv')
+
+    def encode(self):
+        forward_transition_letter = '1' if self.transitions[self.initial]['0'] == self.initial else '0'
+        encoding = forward_transition_letter
+        current_state = self.initial
+        for i in range(len(self.states)):
+            encoding += '1' if current_state in self.accepting else '0'
+            current_state = self.transitions[current_state][forward_transition_letter]
+        return encoding
+
+    def encode_positive_example(self, word):
+        encoding = ''
+        curr_state = self.initial
+        letter_encoding_in_accepting_states = {'0': '00', '1': '10', '#': '11'}
+        for letter in word:
+            encoding += letter \
+                if curr_state not in self.accepting \
+                else letter_encoding_in_accepting_states[letter]
+            curr_state = self.transitions[curr_state][letter]
+        return encoding
+
 
 if __name__ == '__main__':
 
@@ -99,5 +125,3 @@ if __name__ == '__main__':
     dfa_no = dfa_at_least_1.get_complement()
     assert not (dfa_no.recognize('1') or dfa_no.recognize('11'))
     assert dfa_no.recognize('00') and dfa_no.recognize('0') and dfa_no.recognize('000')
-
-	

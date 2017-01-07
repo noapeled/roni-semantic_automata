@@ -18,10 +18,10 @@ class DFA_Annealer:
         accepting_states = {'q0'}
         return DFA(states, transitions, initial_state, accepting_states)
 
-    def compare_energy(self, dfa_a, dfa_b):
-        metric_eval_a = self.__metric_calc(dfa_a) + len(dfa_a.states)
+    def compare_energy(self, dfa_a, dfa_b, positive_examples):
+        metric_eval_a = self.__metric_calc(dfa_a, positive_examples)
         print("Evaluation of suggested hypothesis =", metric_eval_a)
-        metric_eval_b = self.__metric_calc(dfa_b) + len(dfa_b.states)
+        metric_eval_b = self.__metric_calc(dfa_b, positive_examples)
         print("Evaluation of current hypothesis =", metric_eval_b)
         return metric_eval_a - metric_eval_b
 
@@ -46,13 +46,11 @@ class DFA_Annealer:
                 return result
         return dfa
 
-    def __metric_calc(self, dfa):
-        accepting_counter = 0
-        for i in range(2**10):
-            binary_str = "{0:b}".format(i)
-            if dfa.recognize(binary_str):
-                accepting_counter += 1
-        return accepting_counter
+    def __metric_calc(self, dfa, positive_examples):
+        len_g = len(dfa.encode())
+        len_d_g = sum(len(dfa.encode_positive_example(string))
+                      for string in positive_examples)
+        return len_g + len_d_g
 
     '''
     Functions for getting random neighbor
