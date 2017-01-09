@@ -129,8 +129,8 @@ if __name__== "__main__":
 ##        pair_counter += 1
 
     annealer = DFA_Annealer()
-    learner = Simulated_annealing_learner(800, data, annealer)
-    learner.logger(1.2, 0.92)
+    learner = Simulated_annealing_learner(1000, data, annealer)
+    learner.logger(1.0, 0.96)
 
     
 ##    print("\n# INITIAL HYPTHESIS: ")

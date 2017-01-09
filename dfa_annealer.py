@@ -175,7 +175,7 @@ class DFA_Annealer:
             R = Relation(i,j)
             bin_rep = R.get_bianry_representation()
             if not neighbor.recognize(bin_rep):
-                print("Neighbor didn't recognize one of the pairs in data.")
+                print("Neighbor didn't recognize one of the pairs in data: %s" % bin_rep)
                 return None
         print("Neighbor is valid.")
         return neighbor
