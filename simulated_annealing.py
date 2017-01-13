@@ -153,7 +153,7 @@ if __name__== "__main__":
     gv_directory = os.path.join(directory, 'gv')
     os.mkdir(gv_directory)
     for file in glob.glob(os.path.join(directory, '*.gv')):
-        shutil.move(file, gv_directory))
+        shutil.move(file, gv_directory)
     
 ##    print("\n# INITIAL HYPTHESIS: ")
 ##    print(learner.hyp)
