@@ -7,6 +7,9 @@ from relation import Relation
 import random, math
 import shutil
 
+from target_automaton import TargetAutomaton
+
+
 class Simulated_annealing_learner:
 
     def __init__(self, initial_t, data, annealer):
@@ -33,6 +36,8 @@ class Simulated_annealing_learner:
         p = None
         positive_examples = [Relation(i,j).get_bianry_representation()
                              for i,j in self.data]
+        directory = os.path.join('C:\\Users\\Noa Peled\\Desktop\\figures''',
+                                 'figures_' + self.creation_time.strftime('%Y%m%d_%H%M%S'))
         while self.T > threshold:
             iter_counter += 1 
             print ("# ITERATION COUNTER =" , iter_counter)
@@ -50,12 +55,11 @@ class Simulated_annealing_learner:
             else:
                 print("Didn't change hypothesis\n")
             energy = self.annealer.metric_calc(self.hyp, positive_examples)
-            self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, energy),
-                                      os.path.join('C:\\Users\\Noa Peled\\Desktop\\figures''',
-                                                   'figures_' + self.creation_time.strftime('%Y%m%d_%H%M%S')))
+            self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, energy), directory)
             self.T *= alpha
         print("CHOSEN HYPOTHESIS:\n", self.hyp)
-        return self.hyp
+
+        return self.hyp, positive_examples
 
     def logger(self, threshold, alpha):
         print("# APPLYING LEARNER ON THE FOLLOWING PAIRS OF SETS: ")
@@ -72,7 +76,7 @@ class Simulated_annealing_learner:
         print(learner.hyp)
         print("\n")
             
-        self.simulated_annealing(threshold, alpha)
+        return self.simulated_annealing(threshold, alpha)
 
 if __name__== "__main__":
 #    shutil.rmtree('./figures')
@@ -137,7 +141,9 @@ if __name__== "__main__":
 
     annealer = DFA_Annealer()
     learner = Simulated_annealing_learner(1000, data, annealer)
-    learner.logger(1.0, 0.96)
+    final_hyp, positive_examples = learner.logger(1.0, 0.96)
+    target = TargetAutomaton(positive_examples, annealer)
+    target.between_x_and_y(3, 6)
 
     
 ##    print("\n# INITIAL HYPTHESIS: ")
