@@ -79,6 +79,7 @@ class Simulated_annealing_learner:
             
         return self.simulated_annealing(threshold, alpha)
 
+
 if __name__== "__main__":
 #    shutil.rmtree('./figures')
     
@@ -141,8 +142,17 @@ if __name__== "__main__":
 ##        pair_counter += 1
 
     annealer = DFA_Annealer()
-    learner = Simulated_annealing_learner(1000, data, annealer)
-    final_hyp, positive_examples, directory = learner.logger(1.0, 0.96)
+    initial_temperature = 500
+    threshold = 1.0
+    alpha = 0.95
+
+    learner = Simulated_annealing_learner(initial_temperature, data, annealer)
+    final_hyp, positive_examples, directory = learner.logger(threshold, alpha)
+
+    with open(os.path.join(directory, 'parameters.csv'), 'w') as params_f:
+        params_f.write('initial_temperature,%s\n' % initial_temperature)
+        params_f.write('threshold,%s\n' % threshold)
+        params_f.write('alpha,%s\n' % alpha)
 
     target = TargetAutomaton(positive_examples, annealer, directory)
     target.between_x_and_y(3, 6)
@@ -154,7 +164,7 @@ if __name__== "__main__":
     os.mkdir(gv_directory)
     for file in glob.glob(os.path.join(directory, '*.gv')):
         shutil.move(file, gv_directory)
-    
+
 ##    print("\n# INITIAL HYPTHESIS: ")
 ##    print(learner.hyp)
 ##    print("\n")
