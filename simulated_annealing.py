@@ -1,4 +1,5 @@
 import datetime
+import glob
 import os
 
 from dfa_annealer import *
@@ -148,6 +149,11 @@ if __name__== "__main__":
 
     with open(os.path.join(directory, 'positive_examples.txt'), 'w') as pos_f:
         pos_f.write('\n'.join(positive_examples))
+
+    gv_directory = os.path.join(directory, 'gv')
+    os.mkdir(gv_directory)
+    for file in glob.glob(os.path.join(directory, '*.gv')):
+        shutil.move(file, gv_directory))
     
 ##    print("\n# INITIAL HYPTHESIS: ")
 ##    print(learner.hyp)
