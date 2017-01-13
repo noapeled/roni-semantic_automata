@@ -1,6 +1,7 @@
 """
 A class representing a Deterministic Finite Automaton (DFA) over any finite alphabet.
 """
+import datetime
 import os
 
 from graphviz import Digraph
@@ -51,12 +52,12 @@ class DFA:
                 return False
         return curr_state in self.accepting
 
-    def plot_transitions(self, graph_name=''):
+    def plot_transitions(self, graph_name='', directory=None):
         # Requires graphviz executables to be installed.
         dot = Digraph(comment=graph_name,
                       format='png',
                       name=graph_name,
-                      directory=os.path.join('..', 'figures'),
+                      directory=os.path.join('..', 'figures') if directory is None else directory,
                       graph_attr={'rankdir': 'LR'})
         dot.node(graph_name, shape='square')
 

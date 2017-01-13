@@ -1,3 +1,6 @@
+import datetime
+import os
+
 from dfa_annealer import *
 from dfa import DFA
 from relation import Relation
@@ -16,6 +19,7 @@ class Simulated_annealing_learner:
         self.data = data
         # self.hyp = self.annealer.find_initial_hypthesis(data)
         self.hyp = self.annealer.initial_hypothesis()
+        self.creation_time = datetime.datetime.now()
     
     def simulated_annealing(self, threshold, alpha):
         """
@@ -45,7 +49,10 @@ class Simulated_annealing_learner:
                 self.hyp = H_tag
             else:
                 print("Didn't change hypothesis\n")
-            self.hyp.plot_transitions('hyp_%d' % iter_counter)
+            energy = self.annealer.metric_calc(self.hyp, positive_examples)
+            self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, energy),
+                                      os.path.join('C:\\Users\\Noa Peled\\Desktop\\figures''',
+                                                   'figures_' + self.creation_time.strftime('%Y%m%d_%H%M%S')))
             self.T *= alpha
         print("CHOSEN HYPOTHESIS:\n", self.hyp)
         return self.hyp
