@@ -59,7 +59,7 @@ class Simulated_annealing_learner:
             self.T *= alpha
         print("CHOSEN HYPOTHESIS:\n", self.hyp)
 
-        return self.hyp, positive_examples
+        return self.hyp, positive_examples, directory
 
     def logger(self, threshold, alpha):
         print("# APPLYING LEARNER ON THE FOLLOWING PAIRS OF SETS: ")
@@ -86,7 +86,7 @@ if __name__== "__main__":
         for i in range(number_of_lists):
             list_size = random.choice(range(min_list_size, max_list_size))
             list_1 = set(range(list_size))
-            list_2 = set(range(random.choice(range(at_least, min(at_most, list_size)))))
+            list_2 = set(range(random.choice(range(at_least, min(at_most + 1, list_size)))))
             lists.append((list_1, list_2))
         return lists
     
@@ -141,10 +141,13 @@ if __name__== "__main__":
 
     annealer = DFA_Annealer()
     learner = Simulated_annealing_learner(1000, data, annealer)
-    final_hyp, positive_examples = learner.logger(1.0, 0.96)
-    target = TargetAutomaton(positive_examples, annealer)
+    final_hyp, positive_examples, directory = learner.logger(1.0, 0.96)
+
+    target = TargetAutomaton(positive_examples, annealer, directory)
     target.between_x_and_y(3, 6)
 
+    with open(os.path.join(directory, 'positive_examples.txt'), 'w') as pos_f:
+        pos_f.write('\n'.join(positive_examples))
     
 ##    print("\n# INITIAL HYPTHESIS: ")
 ##    print(learner.hyp)

@@ -2,9 +2,10 @@ from dfa import DFA
 
 
 class TargetAutomaton:
-    def __init__(self, positive_examples, annealer):
+    def __init__(self, positive_examples, annealer, directory):
         self.positive_examples = positive_examples
         self.annealer = annealer
+        self.directory = directory
 
     def between_x_and_y(self, x, y):
         states = ['q%s' % i for i in range(y + 2)] + ['qF']
@@ -21,5 +22,6 @@ class TargetAutomaton:
 
         g = DFA(states, transitions, initial, accepting)
         g.plot_transitions('Target Automaton for AT LEAST %s AND AT MOST %s ; E_%s' %
-                           (x, y, self.annealer.metric_calc(g, self.positive_examples)))
+                           (x, y, self.annealer.metric_calc(g, self.positive_examples)),
+                           self.directory)
         return g
