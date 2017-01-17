@@ -33,10 +33,11 @@ class DFA_Annealer:
         Number of retries is limited to 20. Once a valid neighbor is found, it will be returned by the function.
         If by the end of 20 tries it doesn't find a valid neighbor, the current DFA is returned.
         """
-        options = [self.__remove_final_state,  # neighbor func 1
-                   self.__switching_transitions,  # neighbor func 2
-                   self.__add_final_state,  # neighbor func 3
-                   self.__change_accepting]      # neighbor func 4
+        options = [self.__remove_final_state,
+                   self.__switching_transitions,
+                   self.__add_final_state,
+                   self.__change_accepting,
+                   self.__remove_transition_from_qn]
         for i in range(20): #Limited to 20 tries
             if i>=1:
                 print("Raffles another hypothesis.")
@@ -118,7 +119,7 @@ class DFA_Annealer:
         new_transitions = deepcopy(dfa.transitions)
         for state in new_states - {'qF'}:
             state_trans = new_transitions[state]
-            state_trans['0'], state_trans['1'] = state_trans['1'], state_trans['0']
+            state_trans['0'], state_trans['1'] = state_trans.get('1'), state_trans.get('0')
         new_dfa = DFA(new_states, new_transitions, new_initial, new_accepting)
         print(new_dfa)
         return new_dfa
@@ -151,6 +152,25 @@ class DFA_Annealer:
                 new_transitions['q' + str(max_acc_index)].pop('#')
             else:
                 new_transitions['q' + str(max_acc_index + 1)]['#'] = 'qF'
+
+        new_dfa = DFA(deepcopy(dfa.states), new_transitions, 'q0' , deepcopy(dfa.accepting))
+        print(new_dfa)
+        return new_dfa
+
+    def __get_index_of_qn(self, dfa):
+        return max(i for i in range(len(dfa.states)) if ('q%s' % i) in dfa.states)
+
+    def __remove_transition_from_qn(self, dfa):
+        new_transitions = deepcopy(dfa.transitions)
+        last_state_index = self.__get_index_of_qn(dfa)
+        if last_state_index is not None:
+            last_state = 'q%s' % last_state_index
+            if last_state_index == 0:
+                transition_to_remove = random.choice(['0', '1'])
+            else:
+                prev_state = 'q%s' % (last_state_index - 1)
+                transition_to_remove = '0' if new_transitions[prev_state].get('0') == last_state else '1'
+            new_transitions[last_state].pop(transition_to_remove)
 
         new_dfa = DFA(deepcopy(dfa.states), new_transitions, 'q0' , deepcopy(dfa.accepting))
         print(new_dfa)

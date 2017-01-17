@@ -91,7 +91,7 @@ class DFA:
         letter_encoding_in_state_which_reaches_qf = {'0': '00', '1': '10', '#': '11'}
         for letter in word:
             encoding += letter \
-                if not self.reaches_qf(curr_state) \
+                if len(self.transitions[curr_state]) <= 2 \
                 else letter_encoding_in_state_which_reaches_qf[letter]
             curr_state = self.transitions[curr_state][letter]
         return encoding
