@@ -77,12 +77,12 @@ class DFA:
         return bool(self.transitions.get(state, {}).get('#'))
 
     def encode(self):
-        forward_transition_letter = '1' if self.transitions[self.initial]['0'] == self.initial else '0'
+        forward_transition_letter = '1' if self.transitions[self.initial].get('0') == self.initial else '0'
         encoding = forward_transition_letter
         current_state = self.initial
         for i in range(len(self.states)):
-            encoding += '1' if self.reaches_qf(current_state) else '0'
-            current_state = self.transitions[current_state][forward_transition_letter]
+            if 'q%s' % i in self.states:
+                encoding += '1' if self.reaches_qf(current_state) else '0'
         return encoding
 
     def encode_positive_example(self, word):

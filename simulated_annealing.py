@@ -142,7 +142,7 @@ if __name__== "__main__":
 ##        pair_counter += 1
 
     annealer = DFA_Annealer()
-    initial_temperature = 500
+    initial_temperature = 2000
     threshold = 1.0
     alpha = 0.95
 
@@ -154,8 +154,8 @@ if __name__== "__main__":
         params_f.write('threshold,%s\n' % threshold)
         params_f.write('alpha,%s\n' % alpha)
 
-    target = TargetAutomaton(positive_examples, annealer, directory)
-    target.between_x_and_y(3, 6)
+    # target = TargetAutomaton(positive_examples, annealer, directory)
+    # target.between_x_and_y(3, 6)
 
     with open(os.path.join(directory, 'positive_examples.txt'), 'w') as pos_f:
         pos_f.write('\n'.join(positive_examples))

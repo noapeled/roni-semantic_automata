@@ -34,7 +34,7 @@ class DFA_Annealer:
         If by the end of 20 tries it doesn't find a valid neighbor, the current DFA is returned.
         """
         options = [self.__remove_final_state,
-                   self.__switching_transitions,
+                   #TODO: NOTE THAT THSI IS COMMENTED OUT!!! # self.__switching_transitions,
                    self.__add_final_state,
                    self.__change_accepting,
                    self.__remove_transition_from_qn]
@@ -72,7 +72,7 @@ class DFA_Annealer:
         # Building new DFA
         new_states = dfa.states | {new_final_state} # Adding new final state
         new_transitions = deepcopy(dfa.transitions)
-        if new_transitions['q0']['0']=='q0':
+        if new_transitions['q0'].get('0') == 'q0':
             new_transitions[prev_final_state]['1'] = new_final_state
         else:
             new_transitions[prev_final_state]['0'] = new_final_state
@@ -165,8 +165,10 @@ class DFA_Annealer:
         last_state_index = self.__get_index_of_qn(dfa)
         if last_state_index is not None:
             last_state = 'q%s' % last_state_index
-            if last_state_index == 0:
-                transition_to_remove = random.choice(['0', '1'])
+            if all(symbol not in dfa.transitions[last_state] for symbol in ['0', '1']):
+                return deepcopy(dfa)
+            if last_state_index == 0 or any(symbol not in dfa.transitions[last_state] for symbol in ['0', '1']):
+                transition_to_remove = random.choice([symbol for symbol in dfa.transitions[last_state] if symbol != '#'])
             else:
                 prev_state = 'q%s' % (last_state_index - 1)
                 transition_to_remove = '0' if new_transitions[prev_state].get('0') == last_state else '1'
