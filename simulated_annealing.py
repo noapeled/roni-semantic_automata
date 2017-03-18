@@ -84,6 +84,30 @@ if __name__== "__main__":
 #    shutil.rmtree('./figures')
     
     def make_list_of_set_pairs(at_least, at_most, min_list_size, max_list_size, number_of_lists):
+        """
+        Returns pairs, each of which will later be transformed into a binary string, which represents set membership.
+        In each pair:
+        1) First element is the universe: a set {0,...,M}, where M is a random number in [min_list_size, ..., max_list_size].
+        2) Second element is a random subset {0,...,K}, where K is in [at_least, ..., at_most]. More precisely, K is in [at_least,..., M] if M < at_most.
+
+        Thus generally speaking, the result is multiple instances of the generalized quantifier, each taken at random from a random size universe. Numeric example:
+        at_least=3
+        at_most=6
+        min_list_size=20
+        max_list_size=40
+        number_of_lists=18
+        We'll get 18 pairs. Example of one pair:
+        (L1, L2) where
+        L1 = {0, 1, 2, ..., 32}
+        L2 = set(range(random.choice(range(3, min(7, 33))))) = set(range(random.choice(range(3, 7))) = set(range(22))
+
+        :param at_least:
+        :param at_most:
+        :param min_list_size:
+        :param max_list_size:
+        :param number_of_lists:
+        :return:
+        """
         lists = []
         for i in range(number_of_lists):
             list_size = random.choice(range(min_list_size, max_list_size))

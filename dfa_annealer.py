@@ -35,7 +35,7 @@ class DFA_Annealer:
         If by the end of 20 tries it doesn't find a valid neighbor, the current DFA is returned.
         """
         options = [self.__remove_final_state,
-                   #TODO: NOTE THAT THSI IS COMMENTED OUT!!! # self.__switching_transitions,
+                   self.__switching_transitions,
                    self.__add_final_state,
                    self.__increase_accepting_from_left,
                    self.__increase_accepting_from_right,
