@@ -27,7 +27,6 @@ class DFA_Annealer:
         return metric_eval_a - metric_eval_b
 
     def get_random_neighbor(self, dfa, data):
-        #TODO: Change all options to be equally probable.
         """
         Chooses randomly a potential random neighbor and calls function try_option in order to check the validity of the chosen neighbor.
         If the random neighbor is not valid for some reason (as will be described in the try_option documantion),
