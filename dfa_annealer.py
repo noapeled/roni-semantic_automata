@@ -38,7 +38,10 @@ class DFA_Annealer:
         options = [self.__remove_final_state,
                    #TODO: NOTE THAT THSI IS COMMENTED OUT!!! # self.__switching_transitions,
                    self.__add_final_state,
-                   self.__change_accepting,
+                   self.__increase_accepting_from_left,
+                   self.__increase_accepting_from_right,
+                   self.__decrease_accepting_from_left,
+                   self.__decrease_accepting_from_right,
                    self.__remove_transition_from_qn]
         for i in range(20): #Limited to 20 tries
             if i>=1:
@@ -126,21 +129,14 @@ class DFA_Annealer:
         print(new_dfa)
         return new_dfa
 
-
-    def __change_accepting(self, dfa):
+    def __change_accepting_states(self, dfa, refer_state, size_change):
         """
-        Finds the sequence of accepting states in DFA, then randomly chooses and executes one of the following:
-        1) Decreasing number of accepting states by turning right-most accepting state to a non-accepting state
-        2) Decreasing number of accepting states by turning left-most accepting state to a non accepting state
-        3) Increasing number of accepting states by turning the state right to the right-most accepting state to an accepting state as well
-        4) Increasing number of accepting states by turning the state left to the left-most accepting state to an accepting state as well
-
         @param DFA: DFA with n states and x accpeting states
-        @return new_DFA: DFA with n and x+1 or x-1 accepting states, depanding on random choice
+        @param refer_state: 'first_acc' for left-most accepting state or 'last_acc' for right-most accepting state.
+        @param size_change: 'increase' or 'decrease'.
+        @return new_DFA: DFA with change in accepting states per the other parameters.
         """
         accepting_ints = [int(state[1:]) for state in dfa.states if dfa.reaches_qf(state)]
-        refer_state = random.choice(['first_acc', 'last_acc'])
-        size_change = random.choice(['increase', 'decrease'])
         new_transitions = deepcopy(dfa.transitions)
         if refer_state == 'first_acc':
             min_acc_index = min(accepting_ints)
@@ -158,6 +154,34 @@ class DFA_Annealer:
         new_dfa = DFA(deepcopy(dfa.states), new_transitions, 'q0' , deepcopy(dfa.accepting))
         print(new_dfa)
         return new_dfa
+
+    def __decrease_accepting_from_right(self, dfa):
+        """
+        @param DFA: DFA with n states and x accpeting states
+        @return new_DFA: DFA with n and x+1 or x-1 accepting states, depanding on random choice
+        """
+        return self.__change_accepting_states(dfa, 'last_acc', 'decrease')
+
+    def __decrease_accepting_from_left(self, dfa):
+        """
+        @param DFA: DFA with n states and x accpeting states
+        @return new_DFA: DFA with n and x+1 or x-1 accepting states, depanding on random choice
+        """
+        return self.__change_accepting_states(dfa, 'first_acc', 'decrease')
+
+    def __increase_accepting_from_right(self, dfa):
+        """
+        @param DFA: DFA with n states and x accpeting states
+        @return new_DFA: DFA with n and x+1 or x-1 accepting states, depanding on random choice
+        """
+        return self.__change_accepting_states(dfa, 'last_acc', 'increase')
+
+    def __increase_accepting_from_left(self, dfa):
+        """
+        @param DFA: DFA with n states and x accpeting states
+        @return new_DFA: DFA with n and x+1 or x-1 accepting states, depanding on random choice
+        """
+        return self.__change_accepting_states(dfa, 'first_acc', 'increase')
 
     def __get_index_of_qn(self, dfa):
         return max(i for i in range(len(dfa.states)) if ('q%s' % i) in dfa.states)
