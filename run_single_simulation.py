@@ -81,14 +81,8 @@ def simulate_data_3():
     assert all(len(Q) - 10 <= len(P) <= len(Q) - 0 for P, Q in data3)
 
 
-def simulate_between_3_and_6(all_ones=[]):
-    data = make_list_of_set_pairs(at_least=3, at_most=6, min_list_size=5, max_list_size=61, number_of_lists=50,
-                                  add_all_ones=all_ones)
+def __simulate_with_data(data, initial_temperature, threshold, alpha):
     annealer = DFA_Annealer()
-    initial_temperature = 2000
-    threshold = 1.0
-    alpha = 0.95
-
     learner = Simulated_annealing_learner(initial_temperature, data, annealer)
     final_hyp, positive_examples, directory = learner.logger(threshold, alpha, data, learner)
 
@@ -112,9 +106,13 @@ def simulate_between_3_and_6(all_ones=[]):
     ##    print(learner.hyp)
     ##    print("\n")
 
-
     # learner.simulated_annealing(0.4, 0.95)
 
+
+def simulate_between_3_and_6(initial_temperature, threshold, alpha, all_ones=[]):
+    data = make_list_of_set_pairs(at_least=3, at_most=6, min_list_size=5, max_list_size=61, number_of_lists=50,
+                                  add_all_ones=all_ones)
+    return __simulate_with_data(data, initial_temperature, threshold, alpha)
 
 if __name__ == "__main__":
     #    shutil.rmtree('./figures')
@@ -127,4 +125,4 @@ if __name__ == "__main__":
     ##        R = Relation(set_tuple[0], set_tuple[1])
     ##        print("Binary representation of pair:", R.get_bianry_representation())
     ##        pair_counter += 1
-    simulate_between_3_and_6(all_ones=[4])
+    simulate_between_3_and_6(initial_temperature=2000, threshold=1.0, alpha=0.95, all_ones=[4])
