@@ -7,7 +7,7 @@ from dfa_annealer import DFA_Annealer
 from simulated_annealing import Simulated_annealing_learner
 
 
-def make_list_of_set_pairs(at_least, at_most, min_list_size, max_list_size, number_of_lists):
+def make_list_of_set_pairs(at_least, at_most, min_list_size, max_list_size, number_of_lists, add_all_ones=[]):
     """
     Returns pairs, each of which will later be transformed into a binary string, which represents set membership.
     In each pair:
@@ -32,12 +32,15 @@ def make_list_of_set_pairs(at_least, at_most, min_list_size, max_list_size, numb
     :param number_of_lists:
     :return:
     """
+    if not all(at_least <= length <= at_most for length in add_all_ones):
+        raise ValueError('Length to add is out of allowed range')
     lists = []
     for i in range(number_of_lists):
         list_size = random.choice(range(min_list_size, max_list_size))
         list_1 = set(range(list_size))
         list_2 = set(range(random.choice(range(at_least, min(at_most + 1, list_size)))))
         lists.append((list_1, list_2))
+    lists.extend((set(range(length)), set(range(length))) for length in add_all_ones)
     return lists
 
 
@@ -78,8 +81,9 @@ def simulate_data_3():
     assert all(len(Q) - 10 <= len(P) <= len(Q) - 0 for P, Q in data3)
 
 
-def simulate_between_3_and_6():
-    data = make_list_of_set_pairs(at_least=3, at_most=6, min_list_size=5, max_list_size=61, number_of_lists=50)
+def simulate_between_3_and_6(all_ones=[]):
+    data = make_list_of_set_pairs(at_least=3, at_most=6, min_list_size=5, max_list_size=61, number_of_lists=50,
+                                  add_all_ones=all_ones)
     annealer = DFA_Annealer()
     initial_temperature = 2000
     threshold = 1.0
@@ -123,4 +127,4 @@ if __name__ == "__main__":
     ##        R = Relation(set_tuple[0], set_tuple[1])
     ##        print("Binary representation of pair:", R.get_bianry_representation())
     ##        pair_counter += 1
-    simulate_between_3_and_6()
+    simulate_between_3_and_6(all_ones=[4])
