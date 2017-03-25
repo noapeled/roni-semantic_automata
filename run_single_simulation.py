@@ -7,7 +7,15 @@ from dfa_annealer import DFA_Annealer
 from simulated_annealing import Simulated_annealing_learner
 
 
-def make_list_of_set_pairs(at_least, at_most, min_list_size, max_list_size, number_of_lists, add_all_ones=[]):
+def make_list_of_set_pairs_for_quantifier_all(min_set_size, max_set_size, number_of_pairs):
+    lists = []
+    for i in range(number_of_pairs):
+        list_size = random.choice(range(min_set_size, max_set_size))
+        lists.append((set(range(list_size)), set(range(list_size))))
+    return lists
+
+
+def make_list_of_set_pairs_for_quantifier_between(at_least, at_most, min_list_size, max_list_size, number_of_lists, add_all_ones=[]):
     """
     Returns pairs, each of which will later be transformed into a binary string, which represents set membership.
     In each pair:
@@ -109,10 +117,16 @@ def __simulate_with_data(data, initial_temperature, threshold, alpha):
     # learner.simulated_annealing(0.4, 0.95)
 
 
-def simulate_between_3_and_6(initial_temperature, threshold, alpha, all_ones=[]):
-    data = make_list_of_set_pairs(at_least=3, at_most=6, min_list_size=5, max_list_size=61, number_of_lists=50,
-                                  add_all_ones=all_ones)
+def simulate_between_3_and_6(initial_temperature, threshold, alpha, all_ones):
+    data = make_list_of_set_pairs_for_quantifier_between(at_least=3, at_most=6, min_list_size=5, max_list_size=61, number_of_lists=50,
+                                                         add_all_ones=all_ones)
     return __simulate_with_data(data, initial_temperature, threshold, alpha)
+
+
+def simulate_all(initial_temperature, threshold, alpha):
+    data = make_list_of_set_pairs_for_quantifier_all(min_set_size=5, max_set_size=61, number_of_pairs=50)
+    return __simulate_with_data(data, initial_temperature, threshold, alpha)
+
 
 if __name__ == "__main__":
     #    shutil.rmtree('./figures')
@@ -125,4 +139,7 @@ if __name__ == "__main__":
     ##        R = Relation(set_tuple[0], set_tuple[1])
     ##        print("Binary representation of pair:", R.get_bianry_representation())
     ##        pair_counter += 1
-    simulate_between_3_and_6(initial_temperature=2000, threshold=1.0, alpha=0.95, all_ones=[4])
+
+    # simulate_between_3_and_6(initial_temperature=2000, threshold=1.0, alpha=0.95, all_ones=[4])
+
+    simulate_all(initial_temperature=2000, threshold=1.0, alpha=0.95)
