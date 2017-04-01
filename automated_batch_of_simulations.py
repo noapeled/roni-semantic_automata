@@ -19,13 +19,19 @@ def main(quantifier_type, initial_temperature, threshold, alpha,
 
 
 if __name__ == '__main__':
-    main('EXACTLY', 2000, 1.0, 0.95,
+    main('NONE', 2000, 1.0, 0.95,
          num_simulations=1,
-         ns=(2, 5, 9),
-         min_sample_for_each_n=5,
-         max_sample_for_each_n=10,
-         min_zeros_per_positive_example=0,
-         max_zeros_per_positive_example=20)
+         min_set_size=5,
+         max_set_size=61,
+         number_of_pairs=50)
+
+    # main('EXACTLY', 2000, 1.0, 0.95,
+    #      num_simulations=1,
+    #      ns=(2, 5, 9),
+    #      min_sample_for_each_n=5,
+    #      max_sample_for_each_n=10,
+    #      min_zeros_per_positive_example=0,
+    #      max_zeros_per_positive_example=20)
 
     # main('ALL', 2000, 1.0, 0.95,
     #      num_simulations=10,
@@ -34,6 +40,7 @@ if __name__ == '__main__':
     # main('ALL_OF_THE_EXACTLY', 2000, 1.0, 0.95,
     #      num_simulations=10,
     #      ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10)
+
     # main('BETWEEN_WITH_FIXED_UNIVERSE_SIZE', 2000, 1.0, 0.95,
     #      num_simulations=10,
     #      all_ones=[],
