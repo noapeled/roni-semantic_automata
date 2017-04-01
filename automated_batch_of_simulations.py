@@ -13,17 +13,23 @@ def main(quantifier_type, initial_temperature, threshold, alpha,
          **kwargs):
     pool = Pool(processes=num_processes, maxtasksperchild=1)
     itr = pool.imap_unordered(run_single_simulation_for_multiprocessing,
-                              [((quantifier_type, initial_temperature, threshold, alpha),kwargs)] * num_simulations)
+                              [((quantifier_type, initial_temperature, threshold, alpha), kwargs)] * num_simulations)
     for run_return_value in itr:
         print('Finished run, return value is:\n%s' % run_return_value)
 
 
 if __name__ == '__main__':
-    main('NONE', 2000, 1.0, 0.95,
+    main('BETWEEN_WITH_DYNAMIC_UNIVERSE_SIZE', 2000, 1.0, 0.95,
          num_simulations=1,
-         min_set_size=5,
-         max_set_size=61,
-         number_of_pairs=50)
+         add_examples_which_are_all_ones_of_these_lengths=[],
+         at_least_ones=5, at_most_ones=61, min_size_of_universe=20,
+         max_size_of_universe=80, number_of_positive_examples=50)
+
+    # main('NONE', 2000, 1.0, 0.95,
+    #      num_simulations=1,
+    #      min_set_size=5,
+    #      max_set_size=61,
+    #      number_of_pairs=50)
 
     # main('EXACTLY', 2000, 1.0, 0.95,
     #      num_simulations=1,

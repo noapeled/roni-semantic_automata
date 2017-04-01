@@ -153,9 +153,9 @@ def create_output_directory(quantifier_type, additional_parameters_to_persist,
     #               '_'.join('%s[%s]' % (pname, pval) for pname, pval in sorted(additional_parameters_to_persist.items()))
     # folder_name = 'tempinit[%s]_thres_[%s]_alpha_[%s]_runid_[%s_%s]_' % (initial_temperature, threshold, alpha, os.getpid(), random.randint(1, 10 ** 6))
     f1 = os.path.join('tempinit[' + str(initial_temperature) + ']' + \
-         'thresh[' + str(threshold) + ']' + \
-         'alpha[' + str(alpha) + ']',
-         'runid[' + str(random.randint(1, 10 ** 10)) + ']')
+                      'thresh[' + str(threshold) + ']' + \
+                      'alpha[' + str(alpha) + ']',
+                      'runid[' + str(random.randint(1, 10 ** 10)) + ']')
     # f2 = os.sep.join(str(pname) + '[' + str(pval) + ']' for pname, pval in sorted(additional_parameters_to_persist.items()))
     folder_name = f1  # os.path.join(f1, f2)
     output_directory = os.path.expanduser(
@@ -190,12 +190,22 @@ def __simulate_with_data(quantifier_type, additional_parameters_to_persist,
     cleanup_output_directory(output_directory)
 
 
-def simulate_between_3_and_6_dynamic_set_size(initial_temperature, threshold, alpha, all_ones):
-    data = make_list_of_set_pairs_for_quantifier_between(at_least_ones=3, at_most_ones=6, min_size_of_universe=5,
-                                                         max_size_of_universe=61,
-                                                         number_of_positive_examples=50,
-                                                         add_examples_which_are_all_ones_of_these_lengths=all_ones)
-    return __simulate_with_data(data, initial_temperature, threshold, alpha)
+def simulate_BETWEEN_with_dynamic_universe_size(initial_temperature, threshold, alpha,
+                                                add_examples_which_are_all_ones_of_these_lengths,
+                                                at_least_ones, at_most_ones,
+                                                min_size_of_universe, max_size_of_universe,
+                                                number_of_positive_examples):
+    data = make_list_of_set_pairs_for_quantifier_between(at_least_ones, at_most_ones,
+                                                         min_size_of_universe, max_size_of_universe,
+                                                         number_of_positive_examples,
+                                                         add_examples_which_are_all_ones_of_these_lengths)
+    return __simulate_with_data(
+            'BETWEEN_WITH_DYNAMIC_UNIVERSE_SIZE',
+            dict(add_examples_which_are_all_ones_of_these_lengths=add_examples_which_are_all_ones_of_these_lengths,
+                 at_least_ones=at_least_ones, at_most_ones=at_most_ones,
+                 min_size_of_universe=min_size_of_universe, max_size_of_universe=max_size_of_universe,
+                 number_of_positive_examples=number_of_positive_examples),
+            data, initial_temperature, threshold, alpha)
 
 
 def simulate_BETWEEN_with_fixed_universe_size(initial_temperature, threshold, alpha, all_ones,
@@ -239,6 +249,7 @@ def run_single_simulation(quantifier_type,
                           alpha,
                           *args, **kwargs):
     quantifier_names_to_functions = {
+        'BETWEEN_WITH_DYNAMIC_UNIVERSE_SIZE': simulate_BETWEEN_with_dynamic_universe_size,
         'NONE': simulate_NONE,
         'EXACTLY': simulate_EXACTLY,
         'ALL': simulate_ALL,
@@ -284,9 +295,14 @@ if __name__ == "__main__":
     # simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha,
     #                             ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10)
 
-    run_single_simulation('EXACTLY', initial_temperature, threshold, alpha,
-                          ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
-                          min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
+    # run_single_simulation('EXACTLY', initial_temperature, threshold, alpha,
+    #                       ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
+    #                       min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
 
     # run_single_simulation('ALL', initial_temperature=2000, threshold=1.0, alpha=0.95,
     #                       min_set_size=5, max_set_size=61, number_of_pairs=50)
+
+    simulate_BETWEEN_with_dynamic_universe_size(initial_temperature, threshold, alpha,
+                                                add_examples_which_are_all_ones_of_these_lengths=[],
+                                                at_least_ones=5, at_most_ones=61, min_size_of_universe=20,
+                                                max_size_of_universe=80, number_of_positive_examples=50)
