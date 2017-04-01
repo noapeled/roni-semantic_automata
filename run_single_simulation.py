@@ -31,11 +31,12 @@ def make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns, min_sample_for_each
     pairs = []
     for n in ns:
         pairs.extend([(set(range(n)), set(range(n))) for _ in range(
-                     random.randint(min_sample_for_each_n, max_sample_for_each_n))])
+                random.randint(min_sample_for_each_n, max_sample_for_each_n))])
     return pairs
 
 
-def simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha, ns, min_sample_for_each_n, max_sample_for_each_n):
+def simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha, ns, min_sample_for_each_n,
+                                max_sample_for_each_n):
     data = make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns, min_sample_for_each_n, max_sample_for_each_n)
     return __simulate_with_data(data, initial_temperature, threshold, alpha)
 
@@ -93,7 +94,8 @@ def make_list_of_set_pairs_for_quantifier_between(at_least_ones, at_most_ones,
         univese_set = set(range(universe_size))
         subset_of_universe = set(range(random.choice(range(at_least_ones, min(at_most_ones + 1, universe_size)))))
         positive_examples_as_pairs_of_sets.append((univese_set, subset_of_universe))
-    positive_examples_as_pairs_of_sets.extend((set(range(length)), set(range(length))) for length in add_examples_which_are_all_ones_of_these_lengths)
+    positive_examples_as_pairs_of_sets.extend(
+            (set(range(length)), set(range(length))) for length in add_examples_which_are_all_ones_of_these_lengths)
     return positive_examples_as_pairs_of_sets
 
 
@@ -163,7 +165,8 @@ def __simulate_with_data(data, initial_temperature, threshold, alpha):
 
 
 def simulate_between_3_and_6_dynamic_set_size(initial_temperature, threshold, alpha, all_ones):
-    data = make_list_of_set_pairs_for_quantifier_between(at_least_ones=3, at_most_ones=6, min_size_of_universe=5, max_size_of_universe=61,
+    data = make_list_of_set_pairs_for_quantifier_between(at_least_ones=3, at_most_ones=6, min_size_of_universe=5,
+                                                         max_size_of_universe=61,
                                                          number_of_positive_examples=50,
                                                          add_examples_which_are_all_ones_of_these_lengths=all_ones)
     return __simulate_with_data(data, initial_temperature, threshold, alpha)
@@ -191,6 +194,17 @@ def simulate_none(initial_temperature, threshold, alpha,
     data = make_list_of_set_pairs_for_quantifier_none(
             min_set_size, max_set_size, number_of_pairs)
     return __simulate_with_data(data, initial_temperature, threshold, alpha)
+
+
+def run_single_simulation(quantifier_type,
+                          initial_temperature,
+                          threshold,
+                          alpha,
+                          *args, **kwargs):
+    if quantifier_type == 'EXACTLY':
+        return simulate_EXACTLY(initial_temperature, threshold, alpha, *args, **kwargs)
+    else:
+        raise ValueError('Unknown quantifier type %s' % quantifier_type)
 
 
 if __name__ == "__main__":
@@ -225,6 +239,10 @@ if __name__ == "__main__":
     # simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha,
     #                             ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10)
 
-    simulate_EXACTLY(initial_temperature, threshold, alpha,
-                     ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
-                     min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
+    # simulate_EXACTLY(initial_temperature, threshold, alpha,
+    #                  ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
+    #                  min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
+
+    run_single_simulation('EXACTLY', initial_temperature, threshold, alpha,
+                          ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
+                          min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
