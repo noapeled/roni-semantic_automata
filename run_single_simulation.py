@@ -15,6 +15,14 @@ def make_list_of_set_pairs_for_quantifier_all(min_set_size, max_set_size, number
     return lists
 
 
+def make_list_of_set_pairs_for_quantifier_none(min_set_size, max_set_size, number_of_pairs):
+    lists = []
+    for i in range(number_of_pairs):
+        list_size = random.choice(range(min_set_size, max_set_size))
+        lists.append((set(range(list_size)), set()))
+    return lists
+
+
 def make_list_of_set_pairs_for_quantifier_between(at_least, at_most, min_list_size, max_list_size, number_of_lists, add_all_ones=[]):
     """
     Returns pairs, each of which will later be transformed into a binary string, which represents set membership.
@@ -123,8 +131,16 @@ def simulate_between_3_and_6(initial_temperature, threshold, alpha, all_ones):
     return __simulate_with_data(data, initial_temperature, threshold, alpha)
 
 
-def simulate_all(initial_temperature, threshold, alpha):
-    data = make_list_of_set_pairs_for_quantifier_all(min_set_size=5, max_set_size=61, number_of_pairs=50)
+def simulate_all(initial_temperature, threshold, alpha,
+                 min_set_size, max_set_size, number_of_pairs):
+    data = make_list_of_set_pairs_for_quantifier_all(min_set_size, max_set_size, number_of_pairs)
+    return __simulate_with_data(data, initial_temperature, threshold, alpha)
+
+
+def simulate_none(initial_temperature, threshold, alpha,
+                  min_set_size, max_set_size, number_of_pairs):
+    data = make_list_of_set_pairs_for_quantifier_none(
+            min_set_size, max_set_size, number_of_pairs)
     return __simulate_with_data(data, initial_temperature, threshold, alpha)
 
 
@@ -142,4 +158,8 @@ if __name__ == "__main__":
 
     # simulate_between_3_and_6(initial_temperature=2000, threshold=1.0, alpha=0.95, all_ones=[4])
 
-    simulate_all(initial_temperature=2000, threshold=1.0, alpha=0.95)
+    # simulate_all(initial_temperature=2000, threshold=1.0, alpha=0.95,
+    #   max_set_size=61, number_of_pairs=50)
+
+    simulate_none(initial_temperature=2000, threshold=1.0, alpha=0.95,
+                  min_set_size=5, max_set_size=61, number_of_pairs=50)
