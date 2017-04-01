@@ -145,8 +145,8 @@ def simulate_data_3():
 
 def create_output_directory(quantifier_type, additional_parameters_to_persist,
                             positive_examples, initial_temperature, threshold, alpha):
-    folder_name = ('tempinit=%s_thres=%s_alpha=%s_' % (initial_temperature, threshold, alpha)) + \
-        '_'.join('%s=%s' % (pname, pval) for pname, pval in additional_parameters_to_persist.items())
+    folder_name = ('tempinit=%s_thres=%s_alpha=%s_pid=%s_' % (initial_temperature, threshold, alpha, os.getpid())) + \
+                  '_'.join('%s=%s' % (pname, pval) for pname, pval in sorted(additional_parameters_to_persist.items()))
     output_directory = os.path.expanduser(
             os.path.join('~', 'Desktop', 'semantic_automata_simulations', quantifier_type, folder_name))
     os.makedirs(output_directory)
@@ -198,10 +198,13 @@ def simulate_BETWEEN_with_fixed_universe_size(initial_temperature, threshold, al
     return __simulate_with_data(data, initial_temperature, threshold, alpha)
 
 
-def simulate_all(initial_temperature, threshold, alpha,
+def simulate_ALL(initial_temperature, threshold, alpha,
                  min_set_size, max_set_size, number_of_pairs):
     data = make_list_of_set_pairs_for_quantifier_all(min_set_size, max_set_size, number_of_pairs)
-    return __simulate_with_data(data, initial_temperature, threshold, alpha)
+    return __simulate_with_data(
+            'ALL',
+            dict(min_set_size=min_set_size, max_set_size=max_set_size, number_of_pairs=number_of_pairs),
+            data, initial_temperature, threshold, alpha)
 
 
 def simulate_none(initial_temperature, threshold, alpha,
@@ -218,6 +221,8 @@ def run_single_simulation(quantifier_type,
                           *args, **kwargs):
     if quantifier_type == 'EXACTLY':
         return simulate_EXACTLY(initial_temperature, threshold, alpha, *args, **kwargs)
+    if quantifier_type == 'ALL':
+        return simulate_ALL(initial_temperature, threshold, alpha, *args, **kwargs)
     else:
         raise ValueError('Unknown quantifier type %s' % quantifier_type)
 
@@ -258,6 +263,9 @@ if __name__ == "__main__":
     #                  ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
     #                  min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
 
-    run_single_simulation('EXACTLY', initial_temperature, threshold, alpha,
-                          ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
-                          min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
+    # run_single_simulation('EXACTLY', initial_temperature, threshold, alpha,
+    #                       ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
+    #                       min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
+
+    run_single_simulation('ALL', initial_temperature=2000, threshold=1.0, alpha=0.95,
+                          min_set_size=5, max_set_size=61, number_of_pairs=50)
