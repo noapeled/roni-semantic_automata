@@ -19,23 +19,20 @@ class Simulated_annealing_learner:
         self.hyp = self.annealer.initial_hypothesis()
         self.creation_time = datetime.datetime.now()
     
-    def simulated_annealing(self, threshold, alpha):
+    def simulated_annealing(self, positive_examples, output_directory, threshold, alpha):
         """
         Performs simulated annealing.
 
         @param threshold: stop threshold for the temperature.
         @param alpha: The decrease factor of the temperature.
+        @param output_directory: as the name implies.
 
         """
         iter_counter = 0 
         p = None
-        positive_examples = [Relation(i,j).get_bianry_representation()
-                             for i,j in self.data]
-        directory = os.path.join('C:\\Users\\Noa Peled\\Desktop\\figures''',
-                                 'figures_' + self.creation_time.strftime('%Y%m%d_%H%M%S'))
-
         # Initial hypothesis
-        self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, self.annealer.metric_calc(self.hyp, positive_examples)), directory)
+        self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, self.annealer.metric_calc(self.hyp, positive_examples)),
+                                  output_directory)
 
         while self.T > threshold:
             iter_counter += 1 
@@ -54,25 +51,15 @@ class Simulated_annealing_learner:
             else:
                 print("Didn't change hypothesis\n")
             energy = self.annealer.metric_calc(self.hyp, positive_examples)
-            self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, energy), directory)
+            self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, energy), output_directory)
             self.T *= alpha
         print("CHOSEN HYPOTHESIS:\n", self.hyp)
 
-        return self.hyp, positive_examples, directory
+        return self.hyp, positive_examples
 
-    def logger(self, threshold, alpha, data, learner):
-        print("# APPLYING LEARNER ON THE FOLLOWING PAIRS OF SETS: ")
-        pair_counter = 1
-        for set_tuple in data:
-            print("Pair no.", pair_counter)
-            print(set_tuple)
-            R = Relation(set_tuple[0], set_tuple[1])
-            print("Binary representation of pair:", R.get_bianry_representation())
-            pair_counter += 1
-        
+    def logger(self, positive_examples, output_directory, threshold, alpha):
+        print("# APPLYING LEARNER ON THE FOLLOWING POSITIVE EXAMPLES: %s" % ','.join(positive_examples))
         print("\nInitial temperature:", self.T, ", Threshold:", threshold, ", Alpha:" , alpha)  
-        print("\n# INITIAL HYPTHESIS: ")
-        print(learner.hyp)
+        print("\n# INITIAL HYPOTHESIS:\n", self.hyp)
         print("\n")
-            
-        return self.simulated_annealing(threshold, alpha)
+        return self.simulated_annealing(positive_examples, output_directory, threshold, alpha)

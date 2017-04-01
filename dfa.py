@@ -52,12 +52,12 @@ class DFA:
                 return False
         return curr_state in self.accepting
 
-    def plot_transitions(self, graph_name='', directory=None):
+    def plot_transitions(self, graph_name, directory):
         # Requires graphviz executables to be installed.
         dot = Digraph(comment=graph_name,
                       format='png',
                       name=graph_name,
-                      directory=os.path.join('..', 'figures') if directory is None else directory,
+                      directory=directory,
                       graph_attr={'rankdir': 'LR'})
         dot.node(graph_name, shape='square')
 
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     accepting_all = {'q0'}
     dfa_all = DFA(states_all, transitions_all, initial_all, accepting_all)
 
-    dfa_all.plot_transitions('tmp_dfa')
+    dfa_all.plot_transitions('tmp_dfa', 'figures/tmp_dfa')
     
     assert dfa_all.recognize('') and dfa_all.recognize('1')
     assert not (dfa_all.recognize('0') or dfa_all.recognize('11110') or dfa_all.recognize('0'))

@@ -5,6 +5,7 @@ import shutil
 
 from dfa_annealer import DFA_Annealer
 from simulated_annealing import Simulated_annealing_learner
+from relation import Relation
 
 
 def make_list_of_set_pairs_quantifier_EXACTLY(ns, min_sample_for_each_n, max_sample_for_each_n,
@@ -24,7 +25,13 @@ def simulate_EXACTLY(initial_temperature, threshold, alpha,
     data = make_list_of_set_pairs_quantifier_EXACTLY(
             ns, min_sample_for_each_n, max_sample_for_each_n,
             min_zeros_per_positive_example, max_zeros_per_positive_example)
-    return __simulate_with_data(data, initial_temperature, threshold, alpha)
+    return __simulate_with_data('EXACTLY',
+                                dict(
+                                        ns=ns, min_sample_for_each_n=min_sample_for_each_n,
+                                        max_sample_for_each_n=max_sample_for_each_n,
+                                        min_zeros_per_positive_example=min_zeros_per_positive_example,
+                                        max_zeros_per_positive_example=max_zeros_per_positive_example),
+                                data, initial_temperature, threshold, alpha)
 
 
 def make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns, min_sample_for_each_n, max_sample_for_each_n):
@@ -136,32 +143,40 @@ def simulate_data_3():
     assert all(len(Q) - 10 <= len(P) <= len(Q) - 0 for P, Q in data3)
 
 
-def __simulate_with_data(data, initial_temperature, threshold, alpha):
-    annealer = DFA_Annealer()
-    learner = Simulated_annealing_learner(initial_temperature, data, annealer)
-    final_hyp, positive_examples, directory = learner.logger(threshold, alpha, data, learner)
-
-    with open(os.path.join(directory, 'parameters.csv'), 'w') as params_f:
+def create_output_directory(quantifier_type, additional_parameters_to_persist,
+                            positive_examples, initial_temperature, threshold, alpha):
+    folder_name = ('tempinit=%s_thres=%s_alpha=%s_' % (initial_temperature, threshold, alpha)) + \
+        '_'.join('%s=%s' % (pname, pval) for pname, pval in additional_parameters_to_persist.items())
+    output_directory = os.path.expanduser(
+            os.path.join('~', 'Desktop', 'semantic_automata_simulations', quantifier_type, folder_name))
+    os.makedirs(output_directory)
+    with open(os.path.join(output_directory, 'parameters.csv'), 'w') as params_f:
         params_f.write('initial_temperature,%s\n' % initial_temperature)
         params_f.write('threshold,%s\n' % threshold)
         params_f.write('alpha,%s\n' % alpha)
-
-    # target = TargetAutomaton(positive_examples, annealer, directory)
-    # target.between_x_and_y(3, 6)
-
-    with open(os.path.join(directory, 'positive_examples.txt'), 'w') as pos_f:
+        for param_name, param_value in additional_parameters_to_persist.items():
+            params_f.write('%s,%s' % (param_name, param_value))
+    with open(os.path.join(output_directory, 'positive_examples.txt'), 'w') as pos_f:
         pos_f.write('\n'.join(positive_examples))
+    return output_directory
 
-    gv_directory = os.path.join(directory, 'gv')
+
+def cleanup_output_directory(output_directory):
+    gv_directory = os.path.join(output_directory, 'gv')
     os.mkdir(gv_directory)
-    for file in glob.glob(os.path.join(directory, '*.gv')):
+    for file in glob.glob(os.path.join(output_directory, '*.gv')):
         shutil.move(file, gv_directory)
 
-        ##    print("\n# INITIAL HYPTHESIS: ")
-        ##    print(learner.hyp)
-        ##    print("\n")
 
-        # learner.simulated_annealing(0.4, 0.95)
+def __simulate_with_data(quantifier_type, additional_parameters_to_persist,
+                         data, initial_temperature, threshold, alpha):
+    positive_examples = [Relation(i, j).get_bianry_representation() for i, j in data]
+    output_directory = create_output_directory(quantifier_type, additional_parameters_to_persist,
+                                               positive_examples, initial_temperature, threshold, alpha)
+    annealer = DFA_Annealer()
+    learner = Simulated_annealing_learner(initial_temperature, data, annealer)
+    final_hyp = learner.logger(positive_examples, output_directory, threshold, alpha)
+    cleanup_output_directory(output_directory)
 
 
 def simulate_between_3_and_6_dynamic_set_size(initial_temperature, threshold, alpha, all_ones):
