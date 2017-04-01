@@ -7,6 +7,15 @@ from dfa_annealer import DFA_Annealer
 from simulated_annealing import Simulated_annealing_learner
 
 
+def make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns):
+    return [(set(range(n)), set(range(n))) for n in ns]
+
+
+def simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha, ns):
+    data = make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns)
+    return __simulate_with_data(data, initial_temperature, threshold, alpha)
+
+
 def make_list_of_set_pairs_for_quantifier_all(min_set_size, max_set_size, number_of_pairs):
     lists = []
     for i in range(number_of_pairs):
@@ -184,7 +193,10 @@ if __name__ == "__main__":
     # simulate_none(initial_temperature=2000, threshold=1.0, alpha=0.95,
     #               min_set_size=5, max_set_size=61, number_of_pairs=50)
 
-    simulate_BETWEEN_with_fixed_universe_size(initial_temperature, threshold, alpha,
-                                              all_ones=[],
-                                              at_least_ones=3, at_most_plus_1_ones=6, fixed_universe_size=10,
-                                              number_of_positive_examples=number_of_pairs)
+    # simulate_BETWEEN_with_fixed_universe_size(initial_temperature, threshold, alpha,
+    #                                           all_ones=[],
+    #                                           at_least_ones=3, at_most_plus_1_ones=6, fixed_universe_size=10,
+    #                                           number_of_positive_examples=number_of_pairs)
+
+    simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha,
+                                ns=(2, 5, 9))
