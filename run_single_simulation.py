@@ -7,10 +7,30 @@ from dfa_annealer import DFA_Annealer
 from simulated_annealing import Simulated_annealing_learner
 
 
+def make_list_of_set_pairs_quantifier_EXACTLY(ns, min_sample_for_each_n, max_sample_for_each_n,
+                                              min_zeros_per_positive_example, max_zeros_per_positive_example):
+    pairs = []
+    for n in ns:
+        pairs.extend([(set(range(n + random.randint(min_zeros_per_positive_example, max_zeros_per_positive_example))),
+                       set(range(n)))
+                      for _ in range(random.randint(min_sample_for_each_n, max_sample_for_each_n))
+                      ])
+    return pairs
+
+
+def simulate_EXACTLY(initial_temperature, threshold, alpha,
+                     ns, min_sample_for_each_n, max_sample_for_each_n,
+                     min_zeros_per_positive_example, max_zeros_per_positive_example):
+    data = make_list_of_set_pairs_quantifier_EXACTLY(
+            ns, min_sample_for_each_n, max_sample_for_each_n,
+            min_zeros_per_positive_example, max_zeros_per_positive_example)
+    return __simulate_with_data(data, initial_temperature, threshold, alpha)
+
+
 def make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns, min_sample_for_each_n, max_sample_for_each_n):
     pairs = []
     for n in ns:
-        pairs.extend([(set(range(n)), set(range(n))) for i in range(
+        pairs.extend([(set(range(n)), set(range(n))) for _ in range(
                      random.randint(min_sample_for_each_n, max_sample_for_each_n))])
     return pairs
 
@@ -202,5 +222,9 @@ if __name__ == "__main__":
     #                                           at_least_ones=3, at_most_plus_1_ones=6, fixed_universe_size=10,
     #                                           number_of_positive_examples=number_of_pairs)
 
-    simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha,
-                                ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10)
+    # simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha,
+    #                             ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10)
+
+    simulate_EXACTLY(initial_temperature, threshold, alpha,
+                     ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
+                     min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
