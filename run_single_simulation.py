@@ -7,12 +7,16 @@ from dfa_annealer import DFA_Annealer
 from simulated_annealing import Simulated_annealing_learner
 
 
-def make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns):
-    return [(set(range(n)), set(range(n))) for n in ns]
+def make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns, min_sample_for_each_n, max_sample_for_each_n):
+    pairs = []
+    for n in ns:
+        pairs.extend([(set(range(n)), set(range(n))) for i in range(
+                     random.randint(min_sample_for_each_n, max_sample_for_each_n))])
+    return pairs
 
 
-def simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha, ns):
-    data = make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns)
+def simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha, ns, min_sample_for_each_n, max_sample_for_each_n):
+    data = make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns, min_sample_for_each_n, max_sample_for_each_n)
     return __simulate_with_data(data, initial_temperature, threshold, alpha)
 
 
@@ -199,4 +203,4 @@ if __name__ == "__main__":
     #                                           number_of_positive_examples=number_of_pairs)
 
     simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha,
-                                ns=(2, 5, 9))
+                                ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10)
