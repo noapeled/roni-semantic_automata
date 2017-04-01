@@ -42,10 +42,13 @@ def make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns, min_sample_for_each
     return pairs
 
 
-def simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha, ns, min_sample_for_each_n,
-                                max_sample_for_each_n):
+def simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha,
+                                ns, min_sample_for_each_n, max_sample_for_each_n):
     data = make_list_of_set_pairs_quantifier_ALL_OF_THE_EXACTLY(ns, min_sample_for_each_n, max_sample_for_each_n)
-    return __simulate_with_data(data, initial_temperature, threshold, alpha)
+    return __simulate_with_data(
+            'ALL_OF_THE_EXACTLY',
+            dict(ns=ns, min_sample_for_each_n=min_sample_for_each_n, max_sample_for_each_n=max_sample_for_each_n),
+            data, initial_temperature, threshold, alpha)
 
 
 def make_list_of_set_pairs_for_quantifier_all(min_set_size, max_set_size, number_of_pairs):
@@ -219,10 +222,14 @@ def run_single_simulation(quantifier_type,
                           threshold,
                           alpha,
                           *args, **kwargs):
-    if quantifier_type == 'EXACTLY':
-        return simulate_EXACTLY(initial_temperature, threshold, alpha, *args, **kwargs)
-    if quantifier_type == 'ALL':
-        return simulate_ALL(initial_temperature, threshold, alpha, *args, **kwargs)
+    quantifier_names_to_functions = {
+        'EXACTLY': simulate_EXACTLY,
+        'ALL': simulate_ALL,
+        'ALL_OF_THE_EXACTLY': simulate_ALL_OF_THE_EXACTLY
+    }
+    if quantifier_type in quantifier_names_to_functions:
+        return quantifier_names_to_functions[quantifier_type]\
+            (initial_temperature, threshold, alpha, *args, **kwargs)
     else:
         raise ValueError('Unknown quantifier type %s' % quantifier_type)
 
