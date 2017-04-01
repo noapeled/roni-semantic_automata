@@ -23,7 +23,11 @@ def make_list_of_set_pairs_for_quantifier_none(min_set_size, max_set_size, numbe
     return lists
 
 
-def make_list_of_set_pairs_for_quantifier_between(at_least, at_most, min_list_size, max_list_size, number_of_lists, add_all_ones=[]):
+def make_list_of_set_pairs_for_quantifier_between(at_least_ones, at_most_ones,
+                                                  min_size_of_universe,
+                                                  max_size_of_universe,
+                                                  number_of_positive_examples,
+                                                  add_examples_which_are_all_ones_of_these_lengths=[]):
     """
     Returns pairs, each of which will later be transformed into a binary string, which represents set membership.
     In each pair:
@@ -41,23 +45,23 @@ def make_list_of_set_pairs_for_quantifier_between(at_least, at_most, min_list_si
     L1 = {0, 1, 2, ..., 32}
     L2 = set(range(random.choice(range(3, min(7, 33))))) = set(range(random.choice(range(3, 7))) = set(range(22))
 
-    :param at_least:
-    :param at_most:
-    :param min_list_size:
-    :param max_list_size:
-    :param number_of_lists:
+    :param at_least_ones:
+    :param at_most_ones:
+    :param min_size_of_universe:
+    :param max_size_of_universe:
+    :param number_of_positive_examples:
     :return:
     """
-    if not all(at_least <= length <= at_most for length in add_all_ones):
+    if not all(at_least_ones <= length <= at_most_ones for length in add_examples_which_are_all_ones_of_these_lengths):
         raise ValueError('Length to add is out of allowed range')
-    lists = []
-    for i in range(number_of_lists):
-        list_size = random.choice(range(min_list_size, max_list_size))
-        list_1 = set(range(list_size))
-        list_2 = set(range(random.choice(range(at_least, min(at_most + 1, list_size)))))
-        lists.append((list_1, list_2))
-    lists.extend((set(range(length)), set(range(length))) for length in add_all_ones)
-    return lists
+    positive_examples_as_pairs_of_sets = []
+    for i in range(number_of_positive_examples):
+        universe_size = random.choice(range(min_size_of_universe, max_size_of_universe))
+        univese_set = set(range(universe_size))
+        subset_of_universe = set(range(random.choice(range(at_least_ones, min(at_most_ones + 1, universe_size)))))
+        positive_examples_as_pairs_of_sets.append((univese_set, subset_of_universe))
+    positive_examples_as_pairs_of_sets.extend((set(range(length)), set(range(length))) for length in add_examples_which_are_all_ones_of_these_lengths)
+    return positive_examples_as_pairs_of_sets
 
 
 def simulate_whatever():
@@ -118,16 +122,28 @@ def __simulate_with_data(data, initial_temperature, threshold, alpha):
     for file in glob.glob(os.path.join(directory, '*.gv')):
         shutil.move(file, gv_directory)
 
-    ##    print("\n# INITIAL HYPTHESIS: ")
-    ##    print(learner.hyp)
-    ##    print("\n")
+        ##    print("\n# INITIAL HYPTHESIS: ")
+        ##    print(learner.hyp)
+        ##    print("\n")
 
-    # learner.simulated_annealing(0.4, 0.95)
+        # learner.simulated_annealing(0.4, 0.95)
 
 
-def simulate_between_3_and_6(initial_temperature, threshold, alpha, all_ones):
-    data = make_list_of_set_pairs_for_quantifier_between(at_least=3, at_most=6, min_list_size=5, max_list_size=61, number_of_lists=50,
-                                                         add_all_ones=all_ones)
+def simulate_between_3_and_6_dynamic_set_size(initial_temperature, threshold, alpha, all_ones):
+    data = make_list_of_set_pairs_for_quantifier_between(at_least_ones=3, at_most_ones=6, min_size_of_universe=5, max_size_of_universe=61,
+                                                         number_of_positive_examples=50,
+                                                         add_examples_which_are_all_ones_of_these_lengths=all_ones)
+    return __simulate_with_data(data, initial_temperature, threshold, alpha)
+
+
+def simulate_BETWEEN_with_fixed_universe_size(initial_temperature, threshold, alpha, all_ones,
+                                              at_least_ones, at_most_plus_1_ones,
+                                              fixed_universe_size, number_of_positive_examples):
+    data = make_list_of_set_pairs_for_quantifier_between(at_least_ones, at_most_plus_1_ones,
+                                                         min_size_of_universe=fixed_universe_size,
+                                                         max_size_of_universe=fixed_universe_size + 1,
+                                                         number_of_positive_examples=number_of_positive_examples,
+                                                         add_examples_which_are_all_ones_of_these_lengths=all_ones)
     return __simulate_with_data(data, initial_temperature, threshold, alpha)
 
 
@@ -156,10 +172,19 @@ if __name__ == "__main__":
     ##        print("Binary representation of pair:", R.get_bianry_representation())
     ##        pair_counter += 1
 
+    initial_temperature = 2000
+    threshold = 1.0
+    alpha = 0.95
+    number_of_pairs = 50
     # simulate_between_3_and_6(initial_temperature=2000, threshold=1.0, alpha=0.95, all_ones=[4])
 
     # simulate_all(initial_temperature=2000, threshold=1.0, alpha=0.95,
     #   max_set_size=61, number_of_pairs=50)
 
-    simulate_none(initial_temperature=2000, threshold=1.0, alpha=0.95,
-                  min_set_size=5, max_set_size=61, number_of_pairs=50)
+    # simulate_none(initial_temperature=2000, threshold=1.0, alpha=0.95,
+    #               min_set_size=5, max_set_size=61, number_of_pairs=50)
+
+    simulate_BETWEEN_with_fixed_universe_size(initial_temperature, threshold, alpha,
+                                              all_ones=[],
+                                              at_least_ones=3, at_most_plus_1_ones=6, fixed_universe_size=10,
+                                              number_of_positive_examples=number_of_pairs)
