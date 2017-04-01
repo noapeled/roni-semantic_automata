@@ -33,6 +33,10 @@ class Simulated_annealing_learner:
                              for i,j in self.data]
         directory = os.path.join('C:\\Users\\Noa Peled\\Desktop\\figures''',
                                  'figures_' + self.creation_time.strftime('%Y%m%d_%H%M%S'))
+
+        # Initial hypothesis
+        self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, self.annealer.metric_calc(self.hyp, positive_examples)), directory)
+
         while self.T > threshold:
             iter_counter += 1 
             print ("# ITERATION COUNTER =" , iter_counter)
