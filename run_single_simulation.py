@@ -27,7 +27,8 @@ def simulate_EXACTLY(initial_temperature, threshold, alpha,
             min_zeros_per_positive_example, max_zeros_per_positive_example)
     return __simulate_with_data('EXACTLY',
                                 dict(
-                                        ns=ns, min_sample_for_each_n=min_sample_for_each_n,
+                                        ns=ns,
+                                        min_sample_for_each_n=min_sample_for_each_n,
                                         max_sample_for_each_n=max_sample_for_each_n,
                                         min_zeros_per_positive_example=min_zeros_per_positive_example,
                                         max_zeros_per_positive_example=max_zeros_per_positive_example),
@@ -148,8 +149,15 @@ def simulate_data_3():
 
 def create_output_directory(quantifier_type, additional_parameters_to_persist,
                             positive_examples, initial_temperature, threshold, alpha):
-    folder_name = ('tempinit=%s_thres=%s_alpha=%s_pid=%s_' % (initial_temperature, threshold, alpha, os.getpid())) + \
-                  '_'.join('%s=%s' % (pname, pval) for pname, pval in sorted(additional_parameters_to_persist.items()))
+    # folder_name = ('tempinit[%s]_thres_[%s]_alpha_[%s]_runid_[%s_%s]_' % (initial_temperature, threshold, alpha, os.getpid(), random.randint(1, 10 ** 6))) + \
+    #               '_'.join('%s[%s]' % (pname, pval) for pname, pval in sorted(additional_parameters_to_persist.items()))
+    # folder_name = 'tempinit[%s]_thres_[%s]_alpha_[%s]_runid_[%s_%s]_' % (initial_temperature, threshold, alpha, os.getpid(), random.randint(1, 10 ** 6))
+    f1 = os.path.join('tempinit[' + str(initial_temperature) + ']' + \
+         'thresh[' + str(threshold) + ']' + \
+         'alpha[' + str(alpha) + ']',
+         'runid[' + str(random.randint(1, 10 ** 10)) + ']')
+    # f2 = os.sep.join(str(pname) + '[' + str(pval) + ']' for pname, pval in sorted(additional_parameters_to_persist.items()))
+    folder_name = f1  # os.path.join(f1, f2)
     output_directory = os.path.expanduser(
             os.path.join('~', 'Desktop', 'semantic_automata_simulations', quantifier_type, folder_name))
     os.makedirs(output_directory)
@@ -198,7 +206,12 @@ def simulate_BETWEEN_with_fixed_universe_size(initial_temperature, threshold, al
                                                          max_size_of_universe=fixed_universe_size + 1,
                                                          number_of_positive_examples=number_of_positive_examples,
                                                          add_examples_which_are_all_ones_of_these_lengths=all_ones)
-    return __simulate_with_data(data, initial_temperature, threshold, alpha)
+    return __simulate_with_data(
+            'BETWEEN_WITH_FIXED_UNIVERSE_SIZE',
+            dict(all_ones=all_ones,
+                 at_least_ones=at_least_ones, at_most_plus_1_ones=at_most_plus_1_ones,
+                 fixed_universe_size=fixed_universe_size, number_of_positive_examples=number_of_positive_examples),
+            data, initial_temperature, threshold, alpha)
 
 
 def simulate_ALL(initial_temperature, threshold, alpha,
@@ -225,10 +238,11 @@ def run_single_simulation(quantifier_type,
     quantifier_names_to_functions = {
         'EXACTLY': simulate_EXACTLY,
         'ALL': simulate_ALL,
-        'ALL_OF_THE_EXACTLY': simulate_ALL_OF_THE_EXACTLY
+        'ALL_OF_THE_EXACTLY': simulate_ALL_OF_THE_EXACTLY,
+        'BETWEEN_WITH_FIXED_UNIVERSE_SIZE': simulate_BETWEEN_with_fixed_universe_size
     }
     if quantifier_type in quantifier_names_to_functions:
-        return quantifier_names_to_functions[quantifier_type]\
+        return quantifier_names_to_functions[quantifier_type] \
             (initial_temperature, threshold, alpha, *args, **kwargs)
     else:
         raise ValueError('Unknown quantifier type %s' % quantifier_type)
@@ -266,13 +280,9 @@ if __name__ == "__main__":
     # simulate_ALL_OF_THE_EXACTLY(initial_temperature, threshold, alpha,
     #                             ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10)
 
-    # simulate_EXACTLY(initial_temperature, threshold, alpha,
-    #                  ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
-    #                  min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
+    run_single_simulation('EXACTLY', initial_temperature, threshold, alpha,
+                          ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
+                          min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
 
-    # run_single_simulation('EXACTLY', initial_temperature, threshold, alpha,
-    #                       ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10,
-    #                       min_zeros_per_positive_example=0, max_zeros_per_positive_example=20)
-
-    run_single_simulation('ALL', initial_temperature=2000, threshold=1.0, alpha=0.95,
-                          min_set_size=5, max_set_size=61, number_of_pairs=50)
+    # run_single_simulation('ALL', initial_temperature=2000, threshold=1.0, alpha=0.95,
+    #                       min_set_size=5, max_set_size=61, number_of_pairs=50)
