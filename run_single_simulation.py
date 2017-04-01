@@ -239,7 +239,7 @@ def run_single_simulation(quantifier_type,
                           alpha,
                           *args, **kwargs):
     quantifier_names_to_functions = {
-        'NONE': simulate_NONE()
+        'NONE': simulate_NONE(),
         'EXACTLY': simulate_EXACTLY,
         'ALL': simulate_ALL,
         'ALL_OF_THE_EXACTLY': simulate_ALL_OF_THE_EXACTLY,
