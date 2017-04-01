@@ -155,7 +155,7 @@ def create_output_directory(quantifier_type, additional_parameters_to_persist,
         params_f.write('threshold,%s\n' % threshold)
         params_f.write('alpha,%s\n' % alpha)
         for param_name, param_value in additional_parameters_to_persist.items():
-            params_f.write('%s,%s' % (param_name, param_value))
+            params_f.write('%s,%s\n' % (param_name, param_value))
     with open(os.path.join(output_directory, 'positive_examples.txt'), 'w') as pos_f:
         pos_f.write('\n'.join(positive_examples))
     return output_directory
