@@ -223,11 +223,14 @@ def simulate_ALL(initial_temperature, threshold, alpha,
             data, initial_temperature, threshold, alpha)
 
 
-def simulate_none(initial_temperature, threshold, alpha,
+def simulate_NONE(initial_temperature, threshold, alpha,
                   min_set_size, max_set_size, number_of_pairs):
     data = make_list_of_set_pairs_for_quantifier_none(
             min_set_size, max_set_size, number_of_pairs)
-    return __simulate_with_data(data, initial_temperature, threshold, alpha)
+    return __simulate_with_data(
+            'NONE',
+            dict(min_set_size=min_set_size, max_set_size=max_set_size, number_of_pairs=number_of_pairs),
+            data, initial_temperature, threshold, alpha)
 
 
 def run_single_simulation(quantifier_type,
@@ -236,6 +239,7 @@ def run_single_simulation(quantifier_type,
                           alpha,
                           *args, **kwargs):
     quantifier_names_to_functions = {
+        'NONE': simulate_NONE()
         'EXACTLY': simulate_EXACTLY,
         'ALL': simulate_ALL,
         'ALL_OF_THE_EXACTLY': simulate_ALL_OF_THE_EXACTLY,
