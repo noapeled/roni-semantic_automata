@@ -41,7 +41,8 @@ class DFA_Annealer:
                    self.__increase_accepting_from_right,
                    self.__decrease_accepting_from_left,
                    self.__decrease_accepting_from_right,
-                   self.__remove_transition_from_qn]
+                   self.__remove_transition_from_qn,
+                   self.__remove_self_transitions]
         for i in range(20): #Limited to 20 tries
             if i>=1:
                 print("Raffles another hypothesis.")
@@ -187,6 +188,15 @@ class DFA_Annealer:
 
     def __get_index_of_qn(self, dfa):
         return max(i for i in range(len(dfa.states)) if ('q%s' % i) in dfa.states)
+
+    def __remove_self_transitions(self, dfa):
+        new_transitions = {state: {edge_label: dfa.transitions[state][edge_label]
+                                   for edge_label in dfa.transitions[state]
+                                   if dfa.transitions[state][edge_label] != state}
+                           for state in dfa.transitions}
+        new_dfa = DFA(deepcopy(dfa.states), new_transitions, 'q0', deepcopy(dfa.accepting))
+        print(new_dfa)
+        return new_dfa
 
     def __remove_transition_from_qn(self, dfa):
         new_transitions = deepcopy(dfa.transitions)
