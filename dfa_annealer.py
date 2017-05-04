@@ -119,11 +119,14 @@ class DFA_Annealer:
         new_initial = 'q0'
         new_states = deepcopy(dfa.states)
         new_accepting = deepcopy(dfa.accepting)
+
         # Changing transitions
-        new_transitions = deepcopy(dfa.transitions)
-        for state in new_states - {'qF'}:
-            state_trans = new_transitions[state]
-            state_trans['0'], state_trans['1'] = state_trans.get('1'), state_trans.get('0')
+        def switch(edge_label):
+            return '0' if edge_label == '1' else ('1' if edge_label == '0' else edge_label)
+
+        new_transitions = {state: {switch(edge_label): dfa.transitions[state][edge_label]
+                           for edge_label in dfa.transitions[state]}
+                           for state in new_states - {'qF'}}
         new_dfa = DFA(new_states, new_transitions, new_initial, new_accepting)
         print(new_dfa)
         return new_dfa
