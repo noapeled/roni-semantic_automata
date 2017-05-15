@@ -6,6 +6,7 @@ import shutil
 from dfa_annealer import DFA_Annealer
 from simulated_annealing import Simulated_annealing_learner
 from relation import Relation
+from target_automaton import TargetAutomaton
 
 
 def make_list_of_set_pairs_quantifier_EXACTLY(ns, min_sample_for_each_n, max_sample_for_each_n,
@@ -186,8 +187,9 @@ def __simulate_with_data(quantifier_type, additional_parameters_to_persist,
                                                positive_examples, initial_temperature, threshold, alpha)
     annealer = DFA_Annealer()
     learner = Simulated_annealing_learner(initial_temperature, data, annealer)
-    final_hyp = learner.logger(positive_examples, output_directory, threshold, alpha)
+    final_hyp = learner.logger(positive_examples, output_directory, threshold, alpha)[0]
     cleanup_output_directory(output_directory)
+    return output_directory, final_hyp, positive_examples
 
 
 def simulate_BETWEEN_with_dynamic_universe_size(initial_temperature, threshold, alpha,
@@ -256,9 +258,18 @@ def run_single_simulation(quantifier_type,
         'ALL_OF_THE_EXACTLY': simulate_ALL_OF_THE_EXACTLY,
         'BETWEEN_WITH_FIXED_UNIVERSE_SIZE': simulate_BETWEEN_with_fixed_universe_size
     }
+    qunatifier_names_to_target_dfa = {
+        'NONE': TargetAutomaton.none()
+    }
     if quantifier_type in quantifier_names_to_functions:
-        return quantifier_names_to_functions[quantifier_type] \
+        output_directory, final_hyp, positive_examples = quantifier_names_to_functions[quantifier_type] \
             (initial_temperature, threshold, alpha, *args, **kwargs)
+        with open(os.path.join(output_directory, 'energy_final_hyp_minus_target.csv'), 'w') as final_diff_f:
+            final_diff_f.write(str(DFA_Annealer.compare_energy(
+                    final_hyp,
+                    qunatifier_names_to_target_dfa[quantifier_type],
+                    positive_examples)) if quantifier_type in qunatifier_names_to_target_dfa \
+                                   else 'No target automaton defined')
     else:
         raise ValueError('Unknown quantifier type %s' % quantifier_type)
 

@@ -30,10 +30,11 @@ class DFA_Annealer:
         accepting_states = {'qF'}
         return DFA(states, transitions, initial_state, accepting_states)
 
-    def compare_energy(self, dfa_a, dfa_b, positive_examples):
-        metric_eval_a = self.metric_calc(dfa_a, positive_examples)
+    @staticmethod
+    def compare_energy(dfa_a, dfa_b, positive_examples):
+        metric_eval_a = DFA_Annealer.metric_calc(dfa_a, positive_examples)
         print("Evaluation of suggested hypothesis =", metric_eval_a)
-        metric_eval_b = self.metric_calc(dfa_b, positive_examples)
+        metric_eval_b = DFA_Annealer.metric_calc(dfa_b, positive_examples)
         print("Evaluation of current hypothesis =", metric_eval_b)
         return metric_eval_a - metric_eval_b
 
@@ -64,7 +65,8 @@ class DFA_Annealer:
                 return result
         return dfa
 
-    def metric_calc(self, dfa, positive_examples):
+    @staticmethod
+    def metric_calc(dfa, positive_examples):
         len_g = len(dfa.encode())
         len_d_g = sum(len(dfa.encode_positive_example(string))
                       for string in positive_examples)
