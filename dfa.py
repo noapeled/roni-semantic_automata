@@ -86,13 +86,20 @@ class DFA:
         return encoding
 
     def encode_positive_example(self, word):
+        def deterministic_transition(state):
+            return len(self.transitions[state]) == 1
+
+        def at_most_two_transitions(state):
+            return len(self.transitions[curr_state]) <= 2
+
         encoding = ''
         curr_state = self.initial
         letter_encoding_in_state_which_reaches_qf = {'0': '00', '1': '10', '#': '11'}
         for letter in word:
-            encoding += letter \
-                if len(self.transitions[curr_state]) <= 2 \
-                else letter_encoding_in_state_which_reaches_qf[letter]
+            encoding += \
+                '' if deterministic_transition(curr_state) else \
+                (letter if at_most_two_transitions(curr_state) else
+                 letter_encoding_in_state_which_reaches_qf[letter])
             curr_state = self.transitions[curr_state][letter]
         return encoding
 
