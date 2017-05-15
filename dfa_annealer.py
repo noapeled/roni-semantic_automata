@@ -233,7 +233,7 @@ class DFA_Annealer:
         # If not, return old dfa (i.e don't use neighbor). Otherwise, return neighbor
         for i,j in data:
             R = Relation(i,j)
-            bin_rep = R.get_bianry_representation()
+            bin_rep = R.get_binary_representation(shuffle=True)
             if not neighbor.recognize(bin_rep):
                 print("Neighbor didn't recognize one of the pairs in data: %s" % bin_rep)
                 return None

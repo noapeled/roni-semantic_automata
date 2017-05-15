@@ -1,6 +1,8 @@
 """
 A class representing a relation between two finite groups.
 """
+import random
+
 
 class Relation:
     def __init__(self, set_a, set_b):
@@ -12,19 +14,18 @@ class Relation:
         self.set_a = set_a
         self.set_b = set_b
 
-    def get_bianry_representation(self):
+    def get_binary_representation(self, shuffle):
         """
         Returns a binary string that represents whether each member of the first set is in
         the intersection of the first set and the secound set
 
-        @params set_a, set_b: TODO
+        @params shuffle: whether to shuffle the ones and zeros in the binary representation.
+                         If False, the order of ones and zeros is arbitrary.
+        @type shuffle: bool
         @return: A binary string as described
         """
-        bianry_representation = ""
-        intersection = self.set_a & self.set_b
-        for member in self.set_a:
-            if member in intersection:
-                bianry_representation += "1"
-            else:
-                bianry_representation += "0"
-        return bianry_representation + '#'
+        binary_representation = ["1" if member in (self.set_a & self.set_b) else "0"
+                                 for member in self.set_a]
+        if shuffle:
+            random.shuffle(binary_representation)
+        return ''.join(binary_representation) + '#'
