@@ -9,6 +9,17 @@ from copy import deepcopy
 import random
 
 class DFA_Annealer:
+    def __flip_acceptance_of_random_state(self, dfa):
+        randomly_chosen_state = random.choice(list(dfa.states - {'qF'}))
+        new_transitions = deepcopy(dfa.transitions)
+        if '#' in new_transitions[randomly_chosen_state]:
+            new_transitions[randomly_chosen_state].pop('#')
+        else:
+            new_transitions[randomly_chosen_state]['#'] = 'qF'
+        new_dfa = DFA(deepcopy(dfa.states), new_transitions, 'q0' , deepcopy(dfa.accepting))
+        print(new_dfa)
+        return new_dfa
+
     def initial_hypothesis(self):
         """
         Returns a DFA that accepts all strings
@@ -34,7 +45,8 @@ class DFA_Annealer:
         Number of retries is limited to 20. Once a valid neighbor is found, it will be returned by the function.
         If by the end of 20 tries it doesn't find a valid neighbor, the current DFA is returned.
         """
-        options = [self.__remove_final_state,
+        options = [self.__flip_acceptance_of_random_state,
+                   self.__remove_final_state,
                    self.__switching_transitions,
                    self.__add_final_state,
                    self.__increase_accepting_from_left,
