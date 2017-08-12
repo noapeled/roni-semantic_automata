@@ -12,4 +12,4 @@ dfa_no_such_generalized_quantificational_determiner = DFA(
             accepting='qF'
         )
 dfa_no_such_generalized_quantificational_determiner.plot_transitions(
-    'No such Generalized Quantificational Determiner', '.')
+    'No such Q-Det', '.')
