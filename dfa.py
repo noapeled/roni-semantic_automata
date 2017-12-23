@@ -77,13 +77,22 @@ class DFA:
         return bool(self.transitions.get(state, {}).get('#'))
 
     def encode(self):
-        forward_transition_letter = '1' if self.transitions[self.initial].get('0') == self.initial else '0'
-        encoding = forward_transition_letter
-        current_state = self.initial
-        for i in range(len(self.states)):
-            if 'q%s' % i in self.states:
-                encoding += '1' if self.reaches_qf(current_state) else '0'
-        return encoding
+        # Ensure that the states are consecutively numbered.
+        assert sorted(map(lambda state: int(state[1:]), self.states)) == sorted(range(len(self.states)))
+
+        penalty_existing_transition = 3
+        no_transition = '0'
+        self_transition = '1' + ('0' * penalty_existing_transition)
+        transition_to_next = '1' + ('1' * penalty_existing_transition)
+
+        def encode_transition(state, letter):
+            transition_or_none = self.transitions[state].get(letter)
+            return no_transition if transition_or_none is None else (
+                self_transition if transition_or_none == state else transition_to_next)
+
+        return ''.join(encode_transition('q%d' % i, letter)
+                       for i in range(len(self.states))
+                       for letter in ('0', '1', '#'))
 
     def encode_positive_example(self, word):
         def deterministic_transition(state):
