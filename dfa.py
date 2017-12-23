@@ -81,7 +81,7 @@ class DFA:
         assert sorted(map(lambda state: int(state[1:]), filter(lambda s: s != 'qF', self.states))) == \
                sorted(range(len(self.states) - 1))
 
-        penalty_existing_transition = 3
+        penalty_existing_transition = 1
         no_transition = '0'
         self_transition = '1' + ('0' * penalty_existing_transition)
         transition_to_next = '1' + ('1' * penalty_existing_transition)
