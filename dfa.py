@@ -78,7 +78,8 @@ class DFA:
 
     def encode(self):
         # Ensure that the states are consecutively numbered.
-        assert sorted(map(lambda state: int(state[1:]), self.states)) == sorted(range(len(self.states)))
+        assert sorted(map(lambda state: int(state[1:]), filter(lambda s: s != 'qF', self.states))) == \
+               sorted(range(len(self.states) - 1))
 
         penalty_existing_transition = 3
         no_transition = '0'
@@ -91,7 +92,7 @@ class DFA:
                 self_transition if transition_or_none == state else transition_to_next)
 
         return ''.join(encode_transition('q%d' % i, letter)
-                       for i in range(len(self.states))
+                       for i in range(len(self.states) - 1)
                        for letter in ('0', '1', '#'))
 
     def encode_positive_example(self, word):
