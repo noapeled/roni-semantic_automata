@@ -128,6 +128,7 @@ if __name__ == '__main__':
     plot_mdl_differences(
         'init_hyp_vs_all_of_the_exactly.png',
         20, compute_mdl_differences_init_hyp_vs_all_of_the_exactly(1, 20))
-    plot_mdl_differences(
-        'init_hyp_vs_exactly.png',
-        20, compute_mdl_differences_init_hyp_vs_exactly(1, 20))
+    for i in range(10):
+        plot_mdl_differences(
+            'init_hyp_vs_exactly_%d.png' % i,
+            20, compute_mdl_differences_init_hyp_vs_exactly(1, 20))
