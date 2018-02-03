@@ -33,9 +33,9 @@ class DFA_Annealer:
     @staticmethod
     def compare_energy(dfa_a, dfa_b, positive_examples):
         metric_eval_a = DFA_Annealer.metric_calc(dfa_a, positive_examples)
-        print("Evaluation of suggested hypothesis =", metric_eval_a)
+        # print("Evaluation of suggested hypothesis =", metric_eval_a)
         metric_eval_b = DFA_Annealer.metric_calc(dfa_b, positive_examples)
-        print("Evaluation of current hypothesis =", metric_eval_b)
+        # print("Evaluation of current hypothesis =", metric_eval_b)
         return metric_eval_a - metric_eval_b
 
     def get_random_neighbor(self, dfa, data):
