@@ -35,7 +35,7 @@ def create_dfa_all():
 
 def compute_mdl_differences(min_n, max_n):
     results = {}
-    for n1 in range(min_n, max_n):
+    for n1 in range(min_n, max_n + 1):
         for n2 in range(n1, max_n + 1):
             results[n1, n2] = DFA_Annealer.compare_energy(
                 create_dfa_all(),
@@ -47,13 +47,17 @@ def compute_mdl_differences(min_n, max_n):
 
 def plot_mdl_differences(max_n, matrix_as_dict):
     fig, ax = plt.subplots()
-    mask = np.zeros((max_n, max_n))
-    mask[np.triu_indices_from(mask)] = True
-    matrix_as_array = np.zeros((max_n, max_n))
+    mask = np.zeros((max_n + 1, max_n + 1))
+    matrix_as_array = np.zeros((max_n + 1, max_n + 1))
     for k, v in matrix_as_dict.items():
-        matrix_as_array[k[1] - 1, k[0] - 1] = v
+        matrix_as_array[k[1], k[0]] = v
+        if k[0] != k[1]:
+            mask[k[0], k[1]] = True
     with sns.axes_style("white"):
-        ax = sns.heatmap(matrix_as_array, mask=mask, square=True)
+        ax = sns.heatmap(matrix_as_array, mask=mask, square=True, cmap='inferno_r')
+        ax.invert_yaxis()
+        ax.set_xlim(xmin=1)
+        ax.set_ylim(ymin=1)
         plt.savefig('mdl_experiment_1i.png')
 
 
