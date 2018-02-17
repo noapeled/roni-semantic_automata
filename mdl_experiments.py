@@ -150,15 +150,22 @@ def repeat_all_of_the_exactly(min_num_repeat_pos_ex, max_num_repeat_pos_ex, mini
             all_results[num_repeat_pos_ex]
         )
 
+
+def repeat_exactly(num_repeat, minimum_n, maximum_n):
+    all_results = [compute_mdl_differences_init_hyp_vs_exactly(minimum_n, maximum_n) for _ in range(num_repeat)]
+    for i in range(num_repeat):
+        plot_mdl_differences(
+            min(map(lambda d: min(d.values()), all_results)),
+            max(map(lambda d: max(d.values()), all_results)),
+            'EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)',
+            'init_hyp_vs_exactly_%d_min_%d_max_%d.png' % (i, minimum_n, maximum_n),
+            maximum_n,
+            all_results[i])
+
+
 if __name__ == '__main__':
     # print('\n'.join(str(item) for item in sorted(compute_mdl_differences(1, 20).items(),
     #                                              key=lambda pair: pair[1])))
-    minimum_n, maximum_n = 1, 20
-    repeat_all_of_the_exactly(1, 5, minimum_n, maximum_n)
-
-    # for i in range(10):
-    #     plot_mdl_differences(
-    #         'EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)',
-    #         'init_hyp_vs_exactly_%d_min_%d_max_%d.png' % (i, minimum_n, maximum_n),
-    #         maximum_n,
-    #         compute_mdl_differences_init_hyp_vs_exactly(minimum_n, maximum_n))
+    min_n, max_n = 1, 20
+    repeat_all_of_the_exactly(1, 5, min_n, max_n)
+    repeat_exactly(10, min_n, max_n)
