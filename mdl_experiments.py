@@ -12,12 +12,12 @@ from run_single_simulation import make_list_of_set_pairs_quantifier_EXACTLY
 ARBITRARY_REPETITIONS_ALL_OF_EXACTLY = 5
 
 
-def get_positive_examples_for_exactly(n1, n2):
+def get_positive_examples_for_exactly(min_sample_for_each_n, max_sample_for_each_n, n1, n2):
     return [Relation(i, j).get_binary_representation(shuffle=True) for i, j in
             make_list_of_set_pairs_quantifier_EXACTLY(
-                ns=(n1, n2),
-                min_sample_for_each_n=5,
-                max_sample_for_each_n=10,
+                (n1, n2),
+                min_sample_for_each_n,
+                max_sample_for_each_n,
                 min_zeros_per_positive_example=0,
                 max_zeros_per_positive_example=20)]
 
@@ -95,14 +95,14 @@ def compute_mdl_differences_init_hyp_vs_all_of_the_exactly(num_repetitions_of_ea
     return results
 
 
-def compute_mdl_differences_init_hyp_vs_exactly(min_n, max_n):
+def compute_mdl_differences_init_hyp_vs_exactly(min_sample_for_each_n, max_sample_for_each_n, min_n, max_n):
     results = {}
     for n1 in range(min_n, max_n + 1):
         for n2 in range(n1, max_n + 1):
             results[n1, n2] = DFA_Annealer.compare_energy(
                 create_dfa_init_hyp(),
                 create_dfa_exactly((n1, n2)),
-                get_positive_examples_for_exactly(n1, n2)
+                get_positive_examples_for_exactly(min_sample_for_each_n, max_sample_for_each_n, n1, n2)
             )
     return results
 
@@ -151,14 +151,16 @@ def repeat_all_of_the_exactly(min_num_repeat_pos_ex, max_num_repeat_pos_ex, mini
         )
 
 
-def repeat_exactly(num_repeat, minimum_n, maximum_n):
-    all_results = [compute_mdl_differences_init_hyp_vs_exactly(minimum_n, maximum_n) for _ in range(num_repeat)]
+def repeat_exactly(min_sample_for_each_n, max_sample_for_each_n, num_repeat, minimum_n, maximum_n):
+    all_results = [compute_mdl_differences_init_hyp_vs_exactly(
+        min_sample_for_each_n, max_sample_for_each_n, minimum_n, maximum_n) for _ in range(num_repeat)]
     for i in range(num_repeat):
         plot_mdl_differences(
             min(map(lambda d: min(d.values()), all_results)),
             max(map(lambda d: max(d.values()), all_results)),
             'EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)',
-            'init_hyp_vs_exactly_%d_min_%d_max_%d.png' % (i, minimum_n, maximum_n),
+            'init_hyp_vs_exactly_%d_minsample_%d_maxsample_%d_minn_%d_maxn_%d.png' %
+                (i, min_sample_for_each_n, max_sample_for_each_n, minimum_n, maximum_n),
             maximum_n,
             all_results[i])
 
@@ -168,4 +170,4 @@ if __name__ == '__main__':
     #                                              key=lambda pair: pair[1])))
     min_n, max_n = 1, 20
     repeat_all_of_the_exactly(1, 5, min_n, max_n)
-    repeat_exactly(10, min_n, max_n)
+    repeat_exactly(1, 1, 10, min_n, max_n)
