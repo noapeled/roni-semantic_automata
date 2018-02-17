@@ -111,6 +111,8 @@ def plot_mdl_differences(title, image_file_name, max_n, matrix_as_dict):
     font = {'weight': 'bold', 'size': 15}
     matplotlib.rc('font', **font)
     mask = np.zeros((max_n + 1, max_n + 1))
+    mask[:, 0] = True
+    mask[0, :] = True
     matrix_as_array = np.zeros((max_n + 1, max_n + 1))
     for k, v in matrix_as_dict.items():
         matrix_as_array[k[1], k[0]] = v
@@ -122,7 +124,7 @@ def plot_mdl_differences(title, image_file_name, max_n, matrix_as_dict):
         ax = sns.heatmap(matrix_as_array, ax=ax, mask=mask, square=True,
                          cmap='inferno_r',
                          # cbar_ax = cbar_ax, cbar=True
-                         annot=True)  # annot=True for values in plot
+                         annot=True, fmt='.0f')
         ax.invert_yaxis()
         ax.set_xlim(xmin=1)
         ax.set_ylim(ymin=1)
@@ -135,13 +137,14 @@ def plot_mdl_differences(title, image_file_name, max_n, matrix_as_dict):
 if __name__ == '__main__':
     # print('\n'.join(str(item) for item in sorted(compute_mdl_differences(1, 20).items(),
     #                                              key=lambda pair: pair[1])))
-    for num_repeat_pos_ex in range(1, 5):
+    for num_repeat_pos_ex in range(1, 6):
         minimum_n, maximum_n = 1, 20
         plot_mdl_differences(
             'ALL_OF_THE_EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)\n#Each Positive Example = %d' % num_repeat_pos_ex,
             'init_hyp_vs_all_of_the_exactly_min_%d_max_%d_rpt_%d.png' % (minimum_n, maximum_n, num_repeat_pos_ex),
             maximum_n,
             compute_mdl_differences_init_hyp_vs_all_of_the_exactly(num_repeat_pos_ex, minimum_n, maximum_n))
+
     for i in range(10):
         plot_mdl_differences(
             'EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)',
