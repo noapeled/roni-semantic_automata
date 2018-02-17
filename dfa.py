@@ -6,6 +6,8 @@ import os
 
 from graphviz import Digraph
 
+PENALTY_EXISTING_TRANSITION = 5
+
 class DFA:
     def __init__(self, states, transitions, initial, accepting):
         """
@@ -81,10 +83,9 @@ class DFA:
         assert sorted(map(lambda state: int(state[1:]), filter(lambda s: s != 'qF', self.states))) == \
                sorted(range(len(self.states) - 1))
 
-        penalty_existing_transition = 1
         no_transition = '0'
-        self_transition = '1' + ('0' * penalty_existing_transition)
-        transition_to_next = '1' + ('1' * penalty_existing_transition)
+        self_transition = '1' + ('0' * PENALTY_EXISTING_TRANSITION)
+        transition_to_next = '1' + ('1' * PENALTY_EXISTING_TRANSITION)
 
         def encode_transition(state, letter):
             transition_or_none = self.transitions[state].get(letter)

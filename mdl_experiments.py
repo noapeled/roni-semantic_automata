@@ -90,7 +90,7 @@ def compute_mdl_differences_init_hyp_vs_all_of_the_exactly(num_repetitions_of_ea
             results[n1, n2] = DFA_Annealer.compare_energy(
                 create_dfa_init_hyp(),
                 create_dfa_all_of_the_exactly((n1, n2)),
-                sorted(['1' * n1, '1' * n2] * num_repetitions_of_each_positive_example)
+                sorted(['1' * n1 + '#', '1' * n2 + '#'] * num_repetitions_of_each_positive_example)
             )
     return results
 
@@ -117,8 +117,12 @@ def plot_mdl_differences(title, image_file_name, max_n, matrix_as_dict):
         if k[0] != k[1]:
             mask[k[0], k[1]] = True
     with sns.axes_style("white"):
-        fig, ax = plt.subplots(figsize=(10, 10))
-        ax = sns.heatmap(matrix_as_array, ax=ax, mask=mask, square=True, cmap='inferno_r')  # annot=True for values in plot
+        fig, ax = plt.subplots(figsize=(20, 20))
+        # cbar_ax = fig.add_axes([.905, .1, .05, .7])
+        ax = sns.heatmap(matrix_as_array, ax=ax, mask=mask, square=True,
+                         cmap='inferno_r',
+                         # cbar_ax = cbar_ax, cbar=True
+                         annot=True)  # annot=True for values in plot
         ax.invert_yaxis()
         ax.set_xlim(xmin=1)
         ax.set_ylim(ymin=1)
@@ -131,7 +135,7 @@ def plot_mdl_differences(title, image_file_name, max_n, matrix_as_dict):
 if __name__ == '__main__':
     # print('\n'.join(str(item) for item in sorted(compute_mdl_differences(1, 20).items(),
     #                                              key=lambda pair: pair[1])))
-    for num_repeat_pos_ex in range(1, 4):
+    for num_repeat_pos_ex in range(1, 5):
         minimum_n, maximum_n = 1, 20
         plot_mdl_differences(
             'ALL_OF_THE_EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)\n#Each Positive Example = %d' % num_repeat_pos_ex,
