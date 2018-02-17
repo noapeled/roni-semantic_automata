@@ -131,12 +131,13 @@ def plot_mdl_differences(title, image_file_name, max_n, matrix_as_dict):
 if __name__ == '__main__':
     # print('\n'.join(str(item) for item in sorted(compute_mdl_differences(1, 20).items(),
     #                                              key=lambda pair: pair[1])))
-    num_repeat_pos_ex, minimum_n, maximum_n = 1, 1, 20
-    plot_mdl_differences(
-        'ALL_OF_THE_EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)\n#Each Positive Example = %d' % num_repeat_pos_ex,
-        'init_hyp_vs_all_of_the_exactly_min_%d_max_%d_rpt_%d.png' % (minimum_n, maximum_n, num_repeat_pos_ex),
-        maximum_n,
-        compute_mdl_differences_init_hyp_vs_all_of_the_exactly(num_repeat_pos_ex, minimum_n, maximum_n))
+    for num_repeat_pos_ex in range(1, 4):
+        minimum_n, maximum_n = 1, 20
+        plot_mdl_differences(
+            'ALL_OF_THE_EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)\n#Each Positive Example = %d' % num_repeat_pos_ex,
+            'init_hyp_vs_all_of_the_exactly_min_%d_max_%d_rpt_%d.png' % (minimum_n, maximum_n, num_repeat_pos_ex),
+            maximum_n,
+            compute_mdl_differences_init_hyp_vs_all_of_the_exactly(num_repeat_pos_ex, minimum_n, maximum_n))
     for i in range(10):
         plot_mdl_differences(
             'EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)',
