@@ -158,7 +158,9 @@ def repeat_exactly(min_sample_for_each_n, max_sample_for_each_n, num_repeat, min
         plot_mdl_differences(
             min(map(lambda d: min(d.values()), all_results)),
             max(map(lambda d: max(d.values()), all_results)),
-            'EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)',
+            'EXACTLY, $E$(Initial DFA) - $E$(Target DFA)\n' +
+                'Min. #Each Positive Example = %d, Max. #Each Positive Example = %d' %
+                    (min_sample_for_each_n, max_sample_for_each_n),
             'init_hyp_vs_exactly_%d_minsample_%d_maxsample_%d_minn_%d_maxn_%d.png' %
                 (i, min_sample_for_each_n, max_sample_for_each_n, minimum_n, maximum_n),
             maximum_n,
@@ -169,5 +171,5 @@ if __name__ == '__main__':
     # print('\n'.join(str(item) for item in sorted(compute_mdl_differences(1, 20).items(),
     #                                              key=lambda pair: pair[1])))
     min_n, max_n = 1, 20
-    repeat_all_of_the_exactly(1, 5, min_n, max_n)
+    # repeat_all_of_the_exactly(1, 5, min_n, max_n)
     repeat_exactly(1, 1, 10, min_n, max_n)
