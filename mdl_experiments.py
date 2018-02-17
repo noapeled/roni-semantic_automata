@@ -1,3 +1,4 @@
+import matplotlib
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
@@ -82,14 +83,14 @@ def create_dfa_exactly(n_values):
 #             )
 #     return results
 
-def compute_mdl_differences_init_hyp_vs_all_of_the_exactly(min_n, max_n):
+def compute_mdl_differences_init_hyp_vs_all_of_the_exactly(num_repetitions_of_each_positive_example, min_n, max_n):
     results = {}
     for n1 in range(min_n, max_n + 1):
         for n2 in range(n1, max_n + 1):
             results[n1, n2] = DFA_Annealer.compare_energy(
                 create_dfa_init_hyp(),
                 create_dfa_all_of_the_exactly((n1, n2)),
-                sorted(['1' * n1, '1' * n2] * ARBITRARY_REPETITIONS_ALL_OF_EXACTLY)
+                sorted(['1' * n1, '1' * n2] * num_repetitions_of_each_positive_example)
             )
     return results
 
@@ -106,8 +107,9 @@ def compute_mdl_differences_init_hyp_vs_exactly(min_n, max_n):
     return results
 
 
-def plot_mdl_differences(image_file_name, max_n, matrix_as_dict):
-    fig, ax = plt.subplots()
+def plot_mdl_differences(title, image_file_name, max_n, matrix_as_dict):
+    font = {'weight': 'bold', 'size': 15}
+    matplotlib.rc('font', **font)
     mask = np.zeros((max_n + 1, max_n + 1))
     matrix_as_array = np.zeros((max_n + 1, max_n + 1))
     for k, v in matrix_as_dict.items():
@@ -115,20 +117,29 @@ def plot_mdl_differences(image_file_name, max_n, matrix_as_dict):
         if k[0] != k[1]:
             mask[k[0], k[1]] = True
     with sns.axes_style("white"):
-        ax = sns.heatmap(matrix_as_array, mask=mask, square=True, cmap='inferno_r')  # annot=True for values in plot
+        fig, ax = plt.subplots(figsize=(10, 10))
+        ax = sns.heatmap(matrix_as_array, ax=ax, mask=mask, square=True, cmap='inferno_r')  # annot=True for values in plot
         ax.invert_yaxis()
         ax.set_xlim(xmin=1)
         ax.set_ylim(ymin=1)
+        ax.set_title(title)
+        ax.set_xlabel('$n_2$')
+        ax.set_ylabel('$n_1$')
         plt.savefig(image_file_name)
 
 
 if __name__ == '__main__':
     # print('\n'.join(str(item) for item in sorted(compute_mdl_differences(1, 20).items(),
     #                                              key=lambda pair: pair[1])))
+    num_repeat_pos_ex, minimum_n, maximum_n = 1, 1, 20
     plot_mdl_differences(
-        'init_hyp_vs_all_of_the_exactly.png',
-        20, compute_mdl_differences_init_hyp_vs_all_of_the_exactly(1, 20))
+        'ALL_OF_THE_EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)\n#Each Positive Example = %d' % num_repeat_pos_ex,
+        'init_hyp_vs_all_of_the_exactly_min_%d_max_%d_rpt_%d.png' % (minimum_n, maximum_n, num_repeat_pos_ex),
+        maximum_n,
+        compute_mdl_differences_init_hyp_vs_all_of_the_exactly(num_repeat_pos_ex, minimum_n, maximum_n))
     for i in range(10):
         plot_mdl_differences(
-            'init_hyp_vs_exactly_%d.png' % i,
-            20, compute_mdl_differences_init_hyp_vs_exactly(1, 20))
+            'EXACTLY\n$E$(Initial DFA) - $E$(Target DFA)',
+            'init_hyp_vs_exactly_%d_min_%d_max_%d.png' % (i, minimum_n, maximum_n),
+            maximum_n,
+            compute_mdl_differences_init_hyp_vs_exactly(minimum_n, maximum_n))
