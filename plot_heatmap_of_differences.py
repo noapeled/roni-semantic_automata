@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 def plot_heatmap(higher_is_better, global_min, global_max, title, image_file_name, max_n, matrix_as_dict):
     base_fontsize = 20
-    font = {'weight': 'bold', 'size': base_fontsize}
+    font = {'weight': 'bold', 'size': base_fontsize * 1.5}
     matplotlib.rc('font', **font)
     mask = np.zeros((max_n + 1, max_n + 1))
     mask[:, 0] = True
@@ -30,6 +30,6 @@ def plot_heatmap(higher_is_better, global_min, global_max, title, image_file_nam
         ax.set_xlim(xmin=1)
         ax.set_ylim(ymin=1)
         ax.set_title(title, fontsize=base_fontsize * 2.5)
-        ax.set_xlabel('$n_2$', fontsize=base_fontsize * 2.5)
-        ax.set_ylabel('$n_1$', fontsize=base_fontsize * 2.5)
+        ax.set_xlabel('$n_1$', fontsize=base_fontsize * 2.5)
+        ax.set_ylabel('$n_2$', fontsize=base_fontsize * 2.5)
         plt.savefig(image_file_name)
