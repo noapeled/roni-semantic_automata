@@ -31,7 +31,7 @@ class DFA_Annealer:
         return DFA(states, transitions, initial_state, accepting_states)
 
     @staticmethod
-    def compare_energy(dfa_a, dfa_b, positive_examples):
+    def energy_difference_a_minus_b(dfa_a, dfa_b, positive_examples):
         metric_eval_a = DFA_Annealer.metric_calc(dfa_a, positive_examples)
         # print("Evaluation of suggested hypothesis =", metric_eval_a)
         metric_eval_b = DFA_Annealer.metric_calc(dfa_b, positive_examples)

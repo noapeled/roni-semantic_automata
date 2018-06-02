@@ -39,7 +39,7 @@ class Simulated_annealing_learner:
             print ("# ITERATION COUNTER =" , iter_counter)
             print ("Current temperature:", self.T)
             H_tag = self.annealer.get_random_neighbor(self.hyp, self.data)
-            delta = self.annealer.compare_energy(H_tag, self.hyp, positive_examples)
+            delta = self.annealer.energy_difference_a_minus_b(H_tag, self.hyp, positive_examples)
             print("Delta =", delta)
             if delta < 0:
                 p = 1

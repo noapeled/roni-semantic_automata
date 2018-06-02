@@ -265,7 +265,7 @@ def run_single_simulation(quantifier_type,
         output_directory, final_hyp, positive_examples = quantifier_names_to_functions[quantifier_type] \
             (initial_temperature, threshold, alpha, *args, **kwargs)
         with open(os.path.join(output_directory, 'energy_final_hyp_minus_target.csv'), 'w') as final_diff_f:
-            final_diff_f.write(str(DFA_Annealer.compare_energy(
+            final_diff_f.write(str(DFA_Annealer.energy_difference_a_minus_b(
                     final_hyp,
                     qunatifier_names_to_target_dfa[quantifier_type],
                     positive_examples)) if quantifier_type in qunatifier_names_to_target_dfa \
