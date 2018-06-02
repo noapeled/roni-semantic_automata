@@ -281,4 +281,3 @@ if __name__== "__main__":
     dfa_6 = annealer.find_initial_hypthesis(data_at_least)
     print('\n')
     dfa_7 = annealer.find_initial_hypthesis(data_no)
-
