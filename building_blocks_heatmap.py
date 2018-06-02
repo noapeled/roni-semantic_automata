@@ -17,7 +17,7 @@ def differences(global_min, global_max):
 
 
 def plot_heatmap(global_min, global_max, title, image_file_name, max_n, matrix_as_dict):
-    base_fontsize = 15
+    base_fontsize = 20
     font = {'weight': 'bold', 'size': base_fontsize}
     matplotlib.rc('font', **font)
     mask = np.zeros((max_n + 1, max_n + 1))
