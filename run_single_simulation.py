@@ -9,8 +9,9 @@ from relation import Relation
 from target_automaton import TargetAutomaton
 
 
-def make_list_of_set_pairs_quantifier_EXACTLY(number_of_pairs, min_sample_for_each_n, max_sample_for_each_n,
-                                              min_zeros_per_positive_example, max_zeros_per_positive_example):
+def make_list_of_set_pairs_for_determiner_EXACTLY(
+        number_of_pairs, min_sample_for_each_n, max_sample_for_each_n,
+        min_zeros_per_positive_example, max_zeros_per_positive_example):
     pairs = []
     for n in number_of_pairs:
         pairs.extend([(set(range(n + random.randint(min_zeros_per_positive_example, max_zeros_per_positive_example))),
@@ -23,7 +24,7 @@ def make_list_of_set_pairs_quantifier_EXACTLY(number_of_pairs, min_sample_for_ea
 def simulate_EXACTLY(initial_temperature, threshold, alpha,
                      ns, min_sample_for_each_n, max_sample_for_each_n,
                      min_zeros_per_positive_example, max_zeros_per_positive_example):
-    data = make_list_of_set_pairs_quantifier_EXACTLY(
+    data = make_list_of_set_pairs_for_determiner_EXACTLY(
             ns, min_sample_for_each_n, max_sample_for_each_n,
             min_zeros_per_positive_example, max_zeros_per_positive_example)
     return __simulate_with_data('EXACTLY',
