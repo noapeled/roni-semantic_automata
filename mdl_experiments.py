@@ -1,3 +1,6 @@
+from plot_heatmap_of_differences import plot_heatmap
+
+import os
 import matplotlib
 import seaborn as sns
 import numpy as np
@@ -7,14 +10,14 @@ from collections import defaultdict
 from dfa import DFA
 from dfa_annealer import DFA_Annealer
 from relation import Relation
-from run_single_simulation import make_list_of_set_pairs_quantifier_EXACTLY
+from run_single_simulation import make_list_of_set_pairs_for_determiner_EXACTLY
 
 ARBITRARY_REPETITIONS_ALL_OF_EXACTLY = 5
 
 
 def get_positive_examples_for_exactly(min_sample_for_each_n, max_sample_for_each_n, n1, n2):
     return [Relation(i, j).get_binary_representation(shuffle=True) for i, j in
-            make_list_of_set_pairs_quantifier_EXACTLY(
+            make_list_of_set_pairs_for_determiner_EXACTLY(
                 (n1, n2),
                 min_sample_for_each_n,
                 max_sample_for_each_n,
@@ -87,7 +90,7 @@ def compute_mdl_differences_init_hyp_vs_all_of_the_exactly(num_repetitions_of_ea
     results = {}
     for n1 in range(min_n, max_n + 1):
         for n2 in range(n1, max_n + 1):
-            results[n1, n2] = DFA_Annealer.compare_energy(
+            results[n1, n2] = DFA_Annealer.energy_difference_a_minus_b(
                 create_dfa_init_hyp(),
                 create_dfa_all_of_the_exactly((n1, n2)),
                 sorted(['1' * n1 + '#', '1' * n2 + '#'] * num_repetitions_of_each_positive_example)
@@ -95,16 +98,18 @@ def compute_mdl_differences_init_hyp_vs_all_of_the_exactly(num_repetitions_of_ea
     return results
 
 
-def compute_mdl_differences_init_hyp_vs_exactly(min_sample_for_each_n, max_sample_for_each_n, min_n, max_n):
-    results = {}
-    for n1 in range(min_n, max_n + 1):
-        for n2 in range(n1, max_n + 1):
-            results[n1, n2] = DFA_Annealer.compare_energy(
-                create_dfa_init_hyp(),
-                create_dfa_exactly((n1, n2)),
-                get_positive_examples_for_exactly(min_sample_for_each_n, max_sample_for_each_n, n1, n2)
-            )
-    return results
+def compute_average_energy_difference_exactly_minus_init_hyp(
+        num_repeat, min_sample_for_each_n, max_sample_for_each_n, min_n, max_n):
+    results = defaultdict(lambda: 0)
+    for _ in range(num_repeat):
+        for n1 in range(min_n, max_n + 1):
+            for n2 in range(n1, max_n + 1):
+                results[n1, n2] += DFA_Annealer.energy_difference_a_minus_b(
+                    create_dfa_exactly((n1, n2)),
+                    create_dfa_init_hyp(),
+                    get_positive_examples_for_exactly(min_sample_for_each_n, max_sample_for_each_n, n1, n2)
+                )
+    return {k: (v / num_repeat) for k, v in results.items()}
 
 
 def plot_mdl_differences(gloal_min, global_max, title, image_file_name, max_n, matrix_as_dict):
@@ -124,7 +129,7 @@ def plot_mdl_differences(gloal_min, global_max, title, image_file_name, max_n, m
         ax = sns.heatmap(matrix_as_array,
                          vmin=gloal_min, vmax=global_max,
                          ax=ax, mask=mask, square=True,
-                         cmap='inferno_r',
+                         cmap='bwr_r',
                          # cbar_ax = cbar_ax, cbar=True
                          annot=True, fmt='.0f')
         ax.invert_yaxis()
@@ -151,20 +156,18 @@ def repeat_all_of_the_exactly(min_num_repeat_pos_ex, max_num_repeat_pos_ex, mini
         )
 
 
-def repeat_exactly(min_sample_for_each_n, max_sample_for_each_n, num_repeat, minimum_n, maximum_n):
-    all_results = [compute_mdl_differences_init_hyp_vs_exactly(
-        min_sample_for_each_n, max_sample_for_each_n, minimum_n, maximum_n) for _ in range(num_repeat)]
-    for i in range(num_repeat):
-        plot_mdl_differences(
-            min(map(lambda d: min(d.values()), all_results)),
-            max(map(lambda d: max(d.values()), all_results)),
-            'EXACTLY, $E$(Initial DFA) - $E$(Target DFA)\n' +
-                'Min. #Each Positive Example = %d, Max. #Each Positive Example = %d' %
-                    (min_sample_for_each_n, max_sample_for_each_n),
-            'init_hyp_vs_exactly_%d_minsample_%d_maxsample_%d_minn_%d_maxn_%d.png' %
-                (i, min_sample_for_each_n, max_sample_for_each_n, minimum_n, maximum_n),
-            maximum_n,
-            all_results[i])
+def plot_mdl_differences_for_determiner_exactly(
+        num_repeat, min_sample_for_each_n, max_sample_for_each_n, minimum_n, maximum_n):
+    all_results = compute_average_energy_difference_exactly_minus_init_hyp(
+        num_repeat, min_sample_for_each_n, max_sample_for_each_n, minimum_n, maximum_n)
+    plot_heatmap(
+        True,
+        minimum_n,
+        maximum_n,
+        '$E\\left(DFA^{ALL}\\right) - E\\left(DFA^{EX}\\left(n_1, n_2\\right)\\right)$' + '\nHigher is better',
+        os.path.join('figures', 'average_energy_difference_exactly.png'),
+        maximum_n,
+        all_results)
 
 
 if __name__ == '__main__':
@@ -172,4 +175,4 @@ if __name__ == '__main__':
     #                                              key=lambda pair: pair[1])))
     min_n, max_n = 1, 20
     # repeat_all_of_the_exactly(1, 5, min_n, max_n)
-    repeat_exactly(1, 1, 10, min_n, max_n)
+    plot_mdl_differences_for_determiner_exactly(10, 1, 1, min_n, max_n)
