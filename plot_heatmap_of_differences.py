@@ -25,7 +25,7 @@ def plot_heatmap(higher_is_better, global_min, global_max, title, image_file_nam
                          mask=mask, square=True,
                          cmap='bwr_r' if higher_is_better else 'bwr',
                          cbar_ax=cbar_ax, cbar=True,
-                         annot=True, fmt='.0f')
+                         annot=False, fmt='.0f')
         ax.invert_yaxis()
         ax.set_xlim(xmin=1)
         ax.set_ylim(ymin=1)
