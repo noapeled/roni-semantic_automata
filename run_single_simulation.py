@@ -10,10 +10,10 @@ from target_automaton import TargetAutomaton
 
 
 def make_list_of_set_pairs_for_determiner_EXACTLY(
-        number_of_pairs, min_sample_for_each_n, max_sample_for_each_n,
+        ns, min_sample_for_each_n, max_sample_for_each_n,
         min_zeros_per_positive_example, max_zeros_per_positive_example):
     pairs = []
-    for n in number_of_pairs:
+    for n in ns:
         pairs.extend([(set(range(n + random.randint(min_zeros_per_positive_example, max_zeros_per_positive_example))),
                        set(range(n)))
                       for _ in range(random.randint(min_sample_for_each_n, max_sample_for_each_n))
