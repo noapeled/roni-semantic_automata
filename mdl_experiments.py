@@ -161,11 +161,12 @@ def plot_mdl_differences_for_determiner_exactly(
     all_results = compute_average_energy_difference_exactly_minus_init_hyp(
         num_repeat, min_sample_for_each_n, max_sample_for_each_n, minimum_n, maximum_n)
     plot_heatmap(
-        True,
+        False,
         minimum_n,
         maximum_n,
-        '$E\\left(DFA^{ALL}\\right) - E\\left(DFA^{EX}\\left(n_1, n_2\\right)\\right)$' + '\nHigher is better',
-        os.path.join('figures', 'average_energy_difference_exactly.png'),
+        '$E\\left(DFA^{EX}\\left(n_1, n_2\\right)\\right) - E\\left(DFA^{ALL}\\right)$' + '\nLower is Better',
+        os.path.join('figures', 'average_energy_difference_exactly_%d_%d.png' %
+                     (min_sample_for_each_n, max_sample_for_each_n)),
         maximum_n,
         all_results)
 
@@ -175,4 +176,6 @@ if __name__ == '__main__':
     #                                              key=lambda pair: pair[1])))
     min_n, max_n = 1, 20
     # repeat_all_of_the_exactly(1, 5, min_n, max_n)
-    plot_mdl_differences_for_determiner_exactly(10, 1, 1, min_n, max_n)
+    for number_of_examples_for_each_n in [5, 10, 15, 20]:
+        plot_mdl_differences_for_determiner_exactly(
+            10, number_of_examples_for_each_n, number_of_examples_for_each_n, min_n, max_n)
