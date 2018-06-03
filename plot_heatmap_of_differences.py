@@ -18,7 +18,7 @@ def plot_heatmap(higher_is_better, global_min, global_max, title, image_file_nam
             mask[k[0], k[1]] = True
     with sns.axes_style("white"):
         fig, ax = plt.subplots(figsize=(20, 20))
-        cbar_ax = fig.add_axes([0.94, 0.1, 0.01, 0.79])
+        cbar_ax = fig.add_axes([0.92, 0.1, 0.01, 0.79])
         ax = sns.heatmap(matrix_as_array,
                          # vmin=global_min, vmax=global_max,
                          ax=ax,
