@@ -16,7 +16,7 @@ def differences(global_min, global_max):
 
 
 if __name__ == '__main__':
-    minimum_n, maximum_n = 1, 20
+    minimum_n, maximum_n = 1, 40
     plot_heatmap(
         False,
         minimum_n, maximum_n,

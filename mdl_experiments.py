@@ -15,14 +15,16 @@ from run_single_simulation import make_list_of_set_pairs_for_determiner_EXACTLY
 ARBITRARY_REPETITIONS_ALL_OF_EXACTLY = 5
 
 
-def get_positive_examples_for_exactly(min_sample_for_each_n, max_sample_for_each_n, n1, n2):
+def get_positive_examples_for_exactly(
+        min_zeros_per_positive_example, max_zeros_per_positive_example,
+        min_sample_for_each_n, max_sample_for_each_n, n1, n2):
     return [Relation(i, j).get_binary_representation(shuffle=True) for i, j in
             make_list_of_set_pairs_for_determiner_EXACTLY(
                 (n1, n2),
                 min_sample_for_each_n,
                 max_sample_for_each_n,
-                min_zeros_per_positive_example=0,
-                max_zeros_per_positive_example=20)]
+                min_zeros_per_positive_example,
+                max_zeros_per_positive_example)]
 
 
 def create_dfa_all_of_the_exactly(n_values):
@@ -99,6 +101,8 @@ def compute_mdl_differences_init_hyp_vs_all_of_the_exactly(num_repetitions_of_ea
 
 
 def compute_average_energy_difference_exactly_minus_init_hyp(
+        min_num_zeros_per_positive_example,
+        max_num_zeros_per_positive_example,
         num_repeat, min_sample_for_each_n, max_sample_for_each_n, min_n, max_n):
     results = defaultdict(lambda: 0)
     for _ in range(num_repeat):
@@ -107,7 +111,10 @@ def compute_average_energy_difference_exactly_minus_init_hyp(
                 results[n1, n2] += DFA_Annealer.energy_difference_a_minus_b(
                     create_dfa_exactly((n1, n2)),
                     create_dfa_init_hyp(),
-                    get_positive_examples_for_exactly(min_sample_for_each_n, max_sample_for_each_n, n1, n2)
+                    get_positive_examples_for_exactly(
+                        min_num_zeros_per_positive_example,
+                        max_num_zeros_per_positive_example,
+                        min_sample_for_each_n, max_sample_for_each_n, n1, n2)
                 )
     return {k: (v / num_repeat) for k, v in results.items()}
 
@@ -157,8 +164,10 @@ def repeat_all_of_the_exactly(min_num_repeat_pos_ex, max_num_repeat_pos_ex, mini
 
 
 def plot_mdl_differences_for_determiner_exactly(
+        min_num_zeros_per_positive_example, max_num_zeros_per_positive_example,
         num_repeat, min_sample_for_each_n, max_sample_for_each_n, minimum_n, maximum_n):
     all_results = compute_average_energy_difference_exactly_minus_init_hyp(
+        min_num_zeros_per_positive_example, max_num_zeros_per_positive_example,
         num_repeat, min_sample_for_each_n, max_sample_for_each_n, minimum_n, maximum_n)
     plot_heatmap(
         False,
@@ -174,8 +183,9 @@ def plot_mdl_differences_for_determiner_exactly(
 if __name__ == '__main__':
     # print('\n'.join(str(item) for item in sorted(compute_mdl_differences(1, 20).items(),
     #                                              key=lambda pair: pair[1])))
-    min_n, max_n = 1, 20
+    min_n, max_n = 1, 40
     # repeat_all_of_the_exactly(1, 5, min_n, max_n)
-    for number_of_examples_for_each_n in [5, 10, 15, 20]:
+    for number_of_examples_for_each_n in range(10, 45, 10):
         plot_mdl_differences_for_determiner_exactly(
+            0, 100,
             10, number_of_examples_for_each_n, number_of_examples_for_each_n, min_n, max_n)
