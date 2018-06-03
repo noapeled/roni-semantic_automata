@@ -183,9 +183,9 @@ def plot_mdl_differences_for_determiner_exactly(
 if __name__ == '__main__':
     # print('\n'.join(str(item) for item in sorted(compute_mdl_differences(1, 20).items(),
     #                                              key=lambda pair: pair[1])))
-    min_n, max_n = 1, 40
+    min_n, max_n = 1, 20
     # repeat_all_of_the_exactly(1, 5, min_n, max_n)
-    for number_of_examples_for_each_n in range(10, 45, 10):
+    for number_of_examples_for_each_n in range(1, 15):
         plot_mdl_differences_for_determiner_exactly(
             0, 100,
             10, number_of_examples_for_each_n, number_of_examples_for_each_n, min_n, max_n)
