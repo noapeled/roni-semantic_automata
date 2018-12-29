@@ -44,7 +44,7 @@ if __name__ == '__main__':
     #      add_examples_which_are_all_ones_of_these_lengths=[],
     #      at_least_ones=5, at_most_ones=61, min_size_of_universe=20,
     #      max_size_of_universe=80, number_of_positive_examples=50)
-    #
+
     main('EXACTLY', 3700, 1.0, 0.96,
          num_simulations=1,
          ns=(2, 5, 9),
