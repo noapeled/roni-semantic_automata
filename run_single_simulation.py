@@ -262,6 +262,15 @@ def run_single_simulation(quantifier_type,
     qunatifier_names_to_target_dfa = {
         'NONE': target_automaton.expected_final_hyp_none(),
         'ALL': target_automaton.expected_final_hyp_all(),
+        'BETWEEN_WITH_FIXED_UNIVERSE_SIZE':
+            target_automaton.expected_final_hyp_between_with_any_universe_size(
+                lower=kwargs.get('at_least_ones'),
+                upper=kwargs.get('at_most_plus_1_ones')),
+        'BETWEEN_WITH_DYNAMIC_UNIVERSE_SIZE':
+            target_automaton.expected_final_hyp_between_with_any_universe_size(
+                lower=kwargs.get('at_least_ones'),
+                upper=kwargs.get('at_most_ones')),
+        'EXACTLY': target_automaton.expected_final_hyp_exactly(kwargs.get('ns'))
     }
     if quantifier_type in quantifier_names_to_functions:
         output_directory, final_hyp, positive_examples = quantifier_names_to_functions[quantifier_type] \
