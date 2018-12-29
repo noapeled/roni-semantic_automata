@@ -25,6 +25,13 @@ class DFA:
         self.initial = initial
         self.accepting = accepting
 
+    def __eq__(self, other):
+        return isinstance(other, DFA) and \
+               self.states == other.states and \
+               self.transitions == other.transitions and \
+               self.initial == other.initial and \
+               self.accepting == other.accepting
+
     def __str__(self):
         to_string = ""
         to_string += "states: "

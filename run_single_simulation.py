@@ -2,11 +2,10 @@ import glob
 import os
 import random
 import shutil
-
 from dfa_annealer import DFA_Annealer
 from simulated_annealing import Simulated_annealing_learner
 from relation import Relation
-from target_automaton import TargetAutomaton
+import target_automaton
 
 
 def make_list_of_set_pairs_for_determiner_EXACTLY(
@@ -251,6 +250,7 @@ def run_single_simulation(quantifier_type,
                           threshold,
                           alpha,
                           *args, **kwargs):
+    print('############ Starting simulation for quantifier %s' % quantifier_type)
     quantifier_names_to_functions = {
         'BETWEEN_WITH_DYNAMIC_UNIVERSE_SIZE': simulate_BETWEEN_with_dynamic_universe_size,
         'NONE': simulate_NONE,
@@ -260,7 +260,8 @@ def run_single_simulation(quantifier_type,
         'BETWEEN_WITH_FIXED_UNIVERSE_SIZE': simulate_BETWEEN_with_fixed_universe_size
     }
     qunatifier_names_to_target_dfa = {
-        'NONE': TargetAutomaton.none()
+        'NONE': target_automaton.expected_final_hyp_none(),
+        'ALL': target_automaton.expected_final_hyp_all(),
     }
     if quantifier_type in quantifier_names_to_functions:
         output_directory, final_hyp, positive_examples = quantifier_names_to_functions[quantifier_type] \
@@ -271,6 +272,8 @@ def run_single_simulation(quantifier_type,
                     qunatifier_names_to_target_dfa[quantifier_type],
                     positive_examples)) if quantifier_type in qunatifier_names_to_target_dfa \
                                    else 'No target automaton defined')
+            print('############ Finished simulation for quantifier %s, output in %s' % (quantifier_type, output_directory))
+            return final_hyp == qunatifier_names_to_target_dfa[quantifier_type]
     else:
         raise ValueError('Unknown quantifier type %s' % quantifier_type)
 
