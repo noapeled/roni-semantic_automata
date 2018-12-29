@@ -1,12 +1,11 @@
+from printer import info
 from plot_heatmap_of_differences import plot_heatmap
-
 import os
 import matplotlib
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import defaultdict
-
 from dfa import DFA
 from dfa_annealer import DFA_Annealer
 from relation import Relation
@@ -181,7 +180,7 @@ def plot_mdl_differences_for_determiner_exactly(
 
 
 if __name__ == '__main__':
-    # print('\n'.join(str(item) for item in sorted(compute_mdl_differences(1, 20).items(),
+    # info('\n'.join(str(item) for item in sorted(compute_mdl_differences(1, 20).items(),
     #                                              key=lambda pair: pair[1])))
     min_n, max_n = 1, 20
     # repeat_all_of_the_exactly(1, 5, min_n, max_n)

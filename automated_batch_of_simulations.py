@@ -1,9 +1,11 @@
+from printer import info, set_up_logging
 from functools import partial
 from multiprocessing.pool import Pool
 from run_single_simulation import SingleSimulationRunner
 
 
 def run_single_simulation_for_multiprocessing(args_and_kwargs):
+    set_up_logging('out.log')
     args, kwargs = args_and_kwargs
     seed, args_for_simulation = args[0], args[1:]
     return SingleSimulationRunner(seed).run_single_simulation(*args_for_simulation, **kwargs)
@@ -20,13 +22,15 @@ def main(base_seed,
                                for seed in range(base_seed, base_seed + num_simulations)])
     total_success = 0
     for i, run_return_value in enumerate(itr):
-        print('Finished run %d of %d, return value is: %s' % (i + 1, num_simulations, run_return_value))
+        info('Finished run %d of %d, return value is: %s' % (i + 1, num_simulations, run_return_value))
         total_success += run_return_value
-    print('########### Total success for quantifier %s is %d of %d' % (quantifier_type, total_success, num_simulations))
+    info('########### Total success for quantifier %s is %d of %d' % (quantifier_type, total_success, num_simulations))
     return total_success
 
 
 if __name__ == '__main__':
+    set_up_logging('out.log')
+
     main(100, 'ALL', 1500, 1.0, 0.91,
          num_simulations=10,
          min_set_size=5, max_set_size=61, number_of_pairs=50)

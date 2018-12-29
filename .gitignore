@@ -1,3 +1,4 @@
+*.log
 semantic_automata_simulations/
 venv/
 __pycache__/

@@ -1,3 +1,4 @@
+from printer import info
 import uuid
 from randomizer import Randomizer
 import glob
@@ -254,7 +255,7 @@ class SingleSimulationRunner(object):
                               threshold,
                               alpha,
                               *args, **kwargs):
-        print('############ Starting simulation for quantifier %s' % quantifier_type)
+        info('############ Starting simulation for quantifier %s' % quantifier_type)
         quantifier_names_to_functions = {
             'BETWEEN_WITH_DYNAMIC_UNIVERSE_SIZE': self.simulate_BETWEEN_with_dynamic_universe_size,
             'NONE': self.simulate_NONE,
@@ -287,7 +288,7 @@ class SingleSimulationRunner(object):
             #             qunatifier_names_to_target_dfa[quantifier_type],
             #             positive_examples)) if quantifier_type in qunatifier_names_to_target_dfa \
             #                            else 'No target automaton defined')
-            print('############ Finished simulation for quantifier %s, output in %s' % (quantifier_type, output_directory))
+            info('############ Finished simulation for quantifier %s, output in %s' % (quantifier_type, output_directory))
             return final_hyp == qunatifier_names_to_target_dfa[quantifier_type]
         else:
             raise ValueError('Unknown quantifier type %s' % quantifier_type)
@@ -296,13 +297,13 @@ class SingleSimulationRunner(object):
 if __name__ == "__main__":
     #    shutil.rmtree('./figures')
     ##
-    ##    print("# APPLYING LEARNER ON THE FOLLOWING PAIRS OF SETS: ")
+    ##    info("# APPLYING LEARNER ON THE FOLLOWING PAIRS OF SETS: ")
     ##    pair_counter = 1
     ##    for set_tuple in data:
-    ##        print("Pair no.", pair_counter)
-    ##        print(set_tuple)
+    ##        info("Pair no.", pair_counter)
+    ##        info(set_tuple)
     ##        R = Relation(set_tuple[0], set_tuple[1])
-    ##        print("Binary representation of pair:", R.get_bianry_representation())
+    ##        info("Binary representation of pair:", R.get_bianry_representation())
     ##        pair_counter += 1
 
     initial_temperature = 2000

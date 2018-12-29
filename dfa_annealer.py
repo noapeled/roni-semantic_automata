@@ -1,8 +1,7 @@
 """
 A class representing an annealer that connects between the DFA module and the Simulated Annealing module
 """
-# TODO: log run progress properly to file
-
+from printer import info
 from dfa import DFA
 from relation import Relation
 from copy import deepcopy
@@ -20,7 +19,7 @@ class DFA_Annealer:
         else:
             new_transitions[randomly_chosen_state]['#'] = 'qF'
         new_dfa = DFA(deepcopy(dfa.states), new_transitions, 'q0' , deepcopy(dfa.accepting))
-        print(new_dfa)
+        info(new_dfa)
         return new_dfa
 
     def initial_hypothesis(self):
@@ -36,9 +35,9 @@ class DFA_Annealer:
     @staticmethod
     def energy_difference_a_minus_b(dfa_a, dfa_b, positive_examples):
         metric_eval_a = DFA_Annealer.metric_calc(dfa_a, positive_examples)
-        # print("Evaluation of suggested hypothesis =", metric_eval_a)
+        # info("Evaluation of suggested hypothesis =", metric_eval_a)
         metric_eval_b = DFA_Annealer.metric_calc(dfa_b, positive_examples)
-        # print("Evaluation of current hypothesis =", metric_eval_b)
+        # info("Evaluation of current hypothesis =", metric_eval_b)
         return metric_eval_a - metric_eval_b
 
     def get_random_neighbor(self, dfa, data):
@@ -61,7 +60,7 @@ class DFA_Annealer:
                    self.__remove_self_transitions]
         for i in range(20): #Limited to 20 tries
             if i>=1:
-                print("Raffles another hypothesis.")
+                info("Raffles another hypothesis.")
             chosen_option = self.randomizer.get_prng().choice(options)
             result = self.__try_option(dfa, data, chosen_option)
             if result is not None:
@@ -106,7 +105,7 @@ class DFA_Annealer:
             new_transitions[new_final_state]['#'] = 'qF'
         new_accepting = deepcopy(dfa.accepting)
         new_dfa = DFA(new_states, new_transitions, 'q0', new_accepting)
-        print(new_dfa)
+        info(new_dfa)
         return new_dfa
 
     def __remove_final_state(self, dfa):
@@ -130,7 +129,7 @@ class DFA_Annealer:
         new_accepting = dfa.accepting - {prev_final_state}
 
         new_dfa = DFA(new_states, new_transitions, 'q0' , new_accepting)
-        print(new_dfa)
+        info(new_dfa)
         return new_dfa
 
     def __switching_transitions(delf, dfa):
@@ -146,7 +145,7 @@ class DFA_Annealer:
                            for edge_label in dfa.transitions[state]}
                            for state in new_states - {'qF'}}
         new_dfa = DFA(new_states, new_transitions, new_initial, new_accepting)
-        print(new_dfa)
+        info(new_dfa)
         return new_dfa
 
     def __change_accepting_states(self, dfa, refer_state, size_change):
@@ -172,7 +171,7 @@ class DFA_Annealer:
                 new_transitions['q' + str(max_acc_index + 1)]['#'] = 'qF'
 
         new_dfa = DFA(deepcopy(dfa.states), new_transitions, 'q0' , deepcopy(dfa.accepting))
-        print(new_dfa)
+        info(new_dfa)
         return new_dfa
 
     def __decrease_accepting_from_right(self, dfa):
@@ -212,7 +211,7 @@ class DFA_Annealer:
                                    if dfa.transitions[state][edge_label] != state}
                            for state in dfa.transitions}
         new_dfa = DFA(deepcopy(dfa.states), new_transitions, 'q0', deepcopy(dfa.accepting))
-        print(new_dfa)
+        info(new_dfa)
         return new_dfa
 
     def __remove_transition_from_qn(self, dfa):
@@ -230,7 +229,7 @@ class DFA_Annealer:
             new_transitions[last_state].pop(transition_to_remove)
 
         new_dfa = DFA(deepcopy(dfa.states), new_transitions, 'q0' , deepcopy(dfa.accepting))
-        print(new_dfa)
+        info(new_dfa)
         return new_dfa
 
     def __try_option(self, dfa, data, chosen_option):
@@ -241,9 +240,9 @@ class DFA_Annealer:
 
         If one of the above doesn't hold, None is returned. Otherwise, the chosen neighbor is returned.
         """
-        print("Random neighbor to be checked:", chosen_option.__name__) 
+        info("Random neighbor to be checked:", chosen_option.__name__)
         if len(dfa.states) <= 2 and chosen_option==self.__remove_final_state:
-            print("Neigbor will cause dfa to have 0 states.")
+            info("Neigbor will cause dfa to have 0 states.")
             return None
         neighbor = chosen_option(dfa)
         # Check whether the neighbor dfa recognizes all couples in data
@@ -252,29 +251,29 @@ class DFA_Annealer:
             R = Relation(self.randomizer, i, j)
             bin_rep = R.get_binary_representation(shuffle=True)
             if not neighbor.recognize(bin_rep):
-                print("Neighbor didn't recognize one of the pairs in data: %s" % bin_rep)
+                info("Neighbor didn't recognize one of the pairs in data: %s" % bin_rep)
                 return None
-        print("Neighbor is valid.")
+        info("Neighbor is valid.")
         return neighbor
 
 
 
 if __name__== "__main__":
     annealer = DFA_Annealer()
-    print("AT LEAST 1")
+    info("AT LEAST 1")
     dfa_1 = annealer.initial_hypthesis_at_least()
-    print("AT LEAST 2")
+    info("AT LEAST 2")
     dfa_2 = annealer.increasing_state(dfa_1)
-    print("AT LEAST 3")
+    info("AT LEAST 3")
     dfa_3 = annealer.increasing_state(dfa_2)
-    print("AT LEAST 2")
+    info("AT LEAST 2")
     dfa_4 = annealer.decreasing_state(dfa_3)
-    print("AT MOST 1")
+    info("AT MOST 1")
     dfa_5 = annealer.complement_relation(dfa_4)
-    print("AT MOST NOT 1")
+    info("AT MOST NOT 1")
     dfa_8 = annealer.__switching_transitions(dfa_5)
 
-    print("\nTesting find_hyp")
+    info("\nTesting find_hyp")
     DOGS = {'Rex', 'Spot', 'Bolt', 'Belka', 'Laika', 'Azit'}
     BROWN_ANIMALS = {'Belka', 'Spot', 'Azit', 'Mitzi'}
     SATELLITES =  {'Yaogan', 'Ofeq_7', 'Ofeq_9', 'WorldView', 'Eros_B', 'Amos_5', 'Glonass'}
@@ -282,5 +281,5 @@ if __name__== "__main__":
     data_at_least = [(DOGS, BROWN_ANIMALS) , (SATELLITES, LOW_EARTH_ORBIT)] 
     data_no = [(DOGS, LOW_EARTH_ORBIT) , (SATELLITES, BROWN_ANIMALS)]
     dfa_6 = annealer.find_initial_hypthesis(data_at_least)
-    print('\n')
+    info('\n')
     dfa_7 = annealer.find_initial_hypthesis(data_no)
