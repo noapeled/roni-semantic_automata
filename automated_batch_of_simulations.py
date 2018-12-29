@@ -30,6 +30,7 @@ def main(base_seed,
 
 
 if __name__ == '__main__':
+    # ============> FOR REPRODUCIBILITY, YOU MUST SET PYTHONHASHSEED=0 IN ENV BEFORE RUNNING <==========
     set_up_logging('out.log')
     base_seed = uuid.uuid1().int
     info('-------------- STARTING BATCH OF SIMULATIONS WITH BASE SEED %s ---------' % base_seed)
