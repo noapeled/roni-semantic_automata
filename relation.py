@@ -1,11 +1,11 @@
 """
 A class representing a relation between two finite groups.
 """
-import random
+from randomizer import Randomizer
 
 
 class Relation:
-    def __init__(self, set_a, set_b):
+    def __init__(self, randomizer, set_a, set_b):
         """
         Initializes the sets.
         
@@ -13,6 +13,7 @@ class Relation:
         """
         self.set_a = set_a
         self.set_b = set_b
+        self.randomizer = randomizer
 
     def get_binary_representation(self, shuffle):
         """
@@ -27,5 +28,5 @@ class Relation:
         binary_representation = ["1" if member in (self.set_a & self.set_b) else "0"
                                  for member in self.set_a]
         if shuffle:
-            random.shuffle(binary_representation)
+            self.randomizer.get_prng().shuffle(binary_representation)
         return ''.join(binary_representation) + '#'

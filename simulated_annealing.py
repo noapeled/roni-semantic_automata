@@ -1,17 +1,11 @@
 import datetime
-import os
-
-from relation import Relation
-import random, math
+import math
 
 
 class Simulated_annealing_learner:
 
-    def __init__(self, initial_t, data, annealer):
-        """
-        @param data: The input data.
-        @param initial_t: Initial value of temperature.
-        """
+    def __init__(self, randomizer, initial_t, data, annealer):
+        self.randomizer = randomizer
         self.annealer = annealer
         self.T = initial_t
         self.data = data
@@ -45,7 +39,7 @@ class Simulated_annealing_learner:
                 p = 1
             else:
                 p = math.exp(-delta/self.T)
-            if p >= random.random():
+            if p >= self.randomizer.get_prng().random():
                 print("Changing hypothesis\n")
                 self.hyp = H_tag
             else:

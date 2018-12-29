@@ -6,11 +6,14 @@ A class representing an annealer that connects between the DFA module and the Si
 from dfa import DFA
 from relation import Relation
 from copy import deepcopy
-import random
+
 
 class DFA_Annealer:
+    def __init__(self, randomizer):
+        self.randomizer = randomizer
+    
     def __flip_acceptance_of_random_state(self, dfa):
-        randomly_chosen_state = random.choice(list(dfa.states - {'qF'}))
+        randomly_chosen_state = self.randomizer.get_prng().choice(list(dfa.states - {'qF'}))
         new_transitions = deepcopy(dfa.transitions)
         if '#' in new_transitions[randomly_chosen_state]:
             new_transitions[randomly_chosen_state].pop('#')
@@ -59,7 +62,7 @@ class DFA_Annealer:
         for i in range(20): #Limited to 20 tries
             if i>=1:
                 print("Raffles another hypothesis.")
-            chosen_option = random.choice(options)
+            chosen_option = self.randomizer.get_prng().choice(options)
             result = self.__try_option(dfa, data, chosen_option)
             if result is not None:
                 return result
@@ -220,7 +223,7 @@ class DFA_Annealer:
             if all(symbol not in dfa.transitions[last_state] for symbol in ['0', '1']):
                 return deepcopy(dfa)
             if last_state_index == 0 or any(symbol not in dfa.transitions[last_state] for symbol in ['0', '1']):
-                transition_to_remove = random.choice([symbol for symbol in dfa.transitions[last_state] if symbol != '#'])
+                transition_to_remove = self.randomizer.get_prng().choice([symbol for symbol in dfa.transitions[last_state] if symbol != '#'])
             else:
                 prev_state = 'q%s' % (last_state_index - 1)
                 transition_to_remove = '0' if new_transitions[prev_state].get('0') == last_state else '1'
@@ -246,7 +249,7 @@ class DFA_Annealer:
         # Check whether the neighbor dfa recognizes all couples in data
         # If not, return old dfa (i.e don't use neighbor). Otherwise, return neighbor
         for i,j in data:
-            R = Relation(i,j)
+            R = Relation(self.randomizer, i, j)
             bin_rep = R.get_binary_representation(shuffle=True)
             if not neighbor.recognize(bin_rep):
                 print("Neighbor didn't recognize one of the pairs in data: %s" % bin_rep)
