@@ -118,8 +118,8 @@ class DFA:
         for letter in word:
             encoding += \
                 '' if deterministic_transition(curr_state) else \
-                (letter if at_most_two_transitions(curr_state) else
-                 letter_encoding_in_state_which_reaches_qf[letter])
+                ((letter * 2) if at_most_two_transitions(curr_state) else
+                 (letter_encoding_in_state_which_reaches_qf[letter] * 2))
             curr_state = self.transitions[curr_state][letter]
         return encoding
 
