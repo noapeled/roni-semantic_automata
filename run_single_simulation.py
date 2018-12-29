@@ -162,8 +162,7 @@ class SingleSimulationRunner(object):
         f1 = os.path.join('tempinit[' + str(initial_temperature) + ']' + \
                           'thresh[' + str(threshold) + ']' + \
                           'alpha[' + str(alpha) + ']',
-                          'runid[' + uuid.uuid1().hex + ']')
-        print('DEBUG:', f1)
+                          'runid[' + uuid.uuid4().hex + ']')
         # f2 = os.sep.join(str(pname) + '[' + str(pval) + ']' for pname, pval in sorted(additional_parameters_to_persist.items()))
         folder_name = f1  # os.path.join(f1, f2)
         output_directory = os.path.join('semantic_automata_simulations', quantifier_type, folder_name)
