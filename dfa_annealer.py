@@ -1,15 +1,16 @@
 """
 A class representing an annealer that connects between the DFA module and the Simulated Annealing module
 """
+from randomizer import Randomizer
 from printer import info
 from dfa import DFA
-from relation import Relation
+from binary_representation import get_binary_representation
 from copy import deepcopy
 
 
 class DFA_Annealer:
-    def __init__(self, randomizer):
-        self.randomizer = randomizer
+    def __init__(self, seed):
+        self.randomizer = Randomizer(seed)
     
     def __flip_acceptance_of_random_state(self, dfa):
         randomly_chosen_state = self.randomizer.get_prng().choice(list(dfa.states - {'qF'}))
@@ -247,9 +248,8 @@ class DFA_Annealer:
         neighbor = chosen_option(dfa)
         # Check whether the neighbor dfa recognizes all couples in data
         # If not, return old dfa (i.e don't use neighbor). Otherwise, return neighbor
-        for i,j in data:
-            R = Relation(self.randomizer, i, j)
-            bin_rep = R.get_binary_representation(shuffle=True)
+        for set_a, set_b in data:
+            bin_rep = get_binary_representation(self.randomizer, set_a, set_b)
             if not neighbor.recognize(bin_rep):
                 info("Neighbor didn't recognize one of the pairs in data: %s" % bin_rep)
                 return None
@@ -259,7 +259,8 @@ class DFA_Annealer:
 
 
 if __name__== "__main__":
-    annealer = DFA_Annealer()
+    import uuid
+    annealer = DFA_Annealer(uuid.uuid1())
     info("AT LEAST 1")
     dfa_1 = annealer.initial_hypthesis_at_least()
     info("AT LEAST 2")

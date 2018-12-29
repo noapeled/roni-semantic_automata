@@ -34,12 +34,10 @@ if __name__ == '__main__':
     base_seed = uuid.uuid1().int
     info('-------------- STARTING BATCH OF SIMULATIONS WITH BASE SEED %s ---------' % base_seed)
 
-    # # 6 / 10
-    # main(base_seed, 'ALL', 1500, 1.0, 0.91,
-    #      num_simulations=10,
-    #      min_set_size=5, max_set_size=61, number_of_pairs=50)
+    main(base_seed, 'ALL', 1500, 1.0, 0.91,
+         num_simulations=10,
+         min_set_size=5, max_set_size=61, number_of_pairs=50)
 
-    # # 8 / 10
     # main(base_seed, 'NONE', 1500, 1.0, 0.93,
     #      num_simulations=10,
     #      min_set_size=5,
@@ -58,14 +56,13 @@ if __name__ == '__main__':
     #      at_least_ones=5, at_most_ones=61, min_size_of_universe=20,
     #      max_size_of_universe=80, number_of_positive_examples=50)
     #
-
-    main(base_seed, 'EXACTLY', 3700, 1.0, 0.96,
-         num_simulations=10,
-         ns=(2, 5, 9),
-         min_sample_for_each_n=5,
-         max_sample_for_each_n=10,
-         min_zeros_per_positive_example=0,
-         max_zeros_per_positive_example=20)
+    # main(base_seed, 'EXACTLY', 3700, 1.0, 0.96,
+    #      num_simulations=10,
+    #      ns=(2, 5, 9),
+    #      min_sample_for_each_n=5,
+    #      max_sample_for_each_n=10,
+    #      min_zeros_per_positive_example=0,
+    #      max_zeros_per_positive_example=20)
     #
     # main(base_seed, 'ALL_OF_THE_EXACTLY', 3800, 1.0, 0.97,
     #      num_simulations=10,

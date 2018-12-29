@@ -1,3 +1,4 @@
+from randomizer import Randomizer
 from printer import info
 import datetime
 import math
@@ -5,8 +6,8 @@ import math
 
 class Simulated_annealing_learner:
 
-    def __init__(self, randomizer, initial_t, data, annealer):
-        self.randomizer = randomizer
+    def __init__(self, seed, initial_t, data, annealer):
+        self.randomizer = Randomizer(seed)
         self.annealer = annealer
         self.T = initial_t
         self.data = data

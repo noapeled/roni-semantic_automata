@@ -6,7 +6,7 @@ import os
 import shutil
 from dfa_annealer import DFA_Annealer
 from simulated_annealing import Simulated_annealing_learner
-from relation import Relation
+from binary_representation import get_binary_representation
 import target_automaton
 
 
@@ -187,11 +187,11 @@ class SingleSimulationRunner(object):
 
     def __simulate_with_data(self, quantifier_type, additional_parameters_to_persist,
                              data, initial_temperature, threshold, alpha):
-        positive_examples = [Relation(self.randomizer, i, j).get_binary_representation(shuffle=True) for i, j in data]
+        positive_examples = [get_binary_representation(self.randomizer, set_a, set_b) for set_a, set_b in data]
         output_directory = self.create_output_directory(quantifier_type, additional_parameters_to_persist,
                                                    positive_examples, initial_temperature, threshold, alpha)
-        annealer = DFA_Annealer(self.randomizer)
-        learner = Simulated_annealing_learner(self.randomizer, initial_temperature, data, annealer)
+        annealer = DFA_Annealer(self.randomizer.seed)
+        learner = Simulated_annealing_learner(self.randomizer.seed, initial_temperature, data, annealer)
         final_hyp = learner.logger(positive_examples, output_directory, threshold, alpha)[0]
         self.cleanup_output_directory(output_directory)
         return output_directory, final_hyp, positive_examples
@@ -289,7 +289,6 @@ class SingleSimulationRunner(object):
             #             positive_examples)) if quantifier_type in qunatifier_names_to_target_dfa \
             #                            else 'No target automaton defined')
             info('############ Finished simulation for quantifier %s, output in %s' % (quantifier_type, output_directory))
-            info('State of PRNG:', self.randomizer.get_prng().getstate())
             return final_hyp == qunatifier_names_to_target_dfa[quantifier_type]
         else:
             raise ValueError('Unknown quantifier type %s' % quantifier_type)
