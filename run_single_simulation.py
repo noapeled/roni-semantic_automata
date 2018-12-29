@@ -160,7 +160,7 @@ def create_output_directory(quantifier_type, additional_parameters_to_persist,
     # f2 = os.sep.join(str(pname) + '[' + str(pval) + ']' for pname, pval in sorted(additional_parameters_to_persist.items()))
     folder_name = f1  # os.path.join(f1, f2)
     output_directory = os.path.expanduser(
-            os.path.join('~', 'Desktop', 'semantic_automata_simulations', quantifier_type, folder_name))
+            os.path.join('semantic_automata_simulations', quantifier_type, folder_name))
     os.makedirs(output_directory)
     with open(os.path.join(output_directory, 'parameters.csv'), 'w') as params_f:
         params_f.write('initial_temperature,%s\n' % initial_temperature)
@@ -275,14 +275,14 @@ def run_single_simulation(quantifier_type,
     if quantifier_type in quantifier_names_to_functions:
         output_directory, final_hyp, positive_examples = quantifier_names_to_functions[quantifier_type] \
             (initial_temperature, threshold, alpha, *args, **kwargs)
-        with open(os.path.join(output_directory, 'energy_final_hyp_minus_target.csv'), 'w') as final_diff_f:
-            final_diff_f.write(str(DFA_Annealer.energy_difference_a_minus_b(
-                    final_hyp,
-                    qunatifier_names_to_target_dfa[quantifier_type],
-                    positive_examples)) if quantifier_type in qunatifier_names_to_target_dfa \
-                                   else 'No target automaton defined')
-            print('############ Finished simulation for quantifier %s, output in %s' % (quantifier_type, output_directory))
-            return final_hyp == qunatifier_names_to_target_dfa[quantifier_type]
+        # with open(os.path.join(output_directory, 'energy_final_hyp_minus_target.csv'), 'w') as final_diff_f:
+        #     final_diff_f.write(str(DFA_Annealer.energy_difference_a_minus_b(
+        #             final_hyp,
+        #             qunatifier_names_to_target_dfa[quantifier_type],
+        #             positive_examples)) if quantifier_type in qunatifier_names_to_target_dfa \
+        #                            else 'No target automaton defined')
+        print('############ Finished simulation for quantifier %s, output in %s' % (quantifier_type, output_directory))
+        return final_hyp == qunatifier_names_to_target_dfa[quantifier_type]
     else:
         raise ValueError('Unknown quantifier type %s' % quantifier_type)
 
