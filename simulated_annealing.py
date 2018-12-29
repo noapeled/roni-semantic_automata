@@ -31,8 +31,8 @@ class Simulated_annealing_learner:
 
         while self.T > threshold:
             iter_counter += 1 
-            print ("# ITERATION COUNTER =" , iter_counter)
-            print ("Current temperature:", self.T)
+            info("# ITERATION COUNTER =" , iter_counter)
+            info("Current temperature:", self.T)
             H_tag = self.annealer.get_random_neighbor(self.hyp, self.data)
             delta = self.annealer.energy_difference_a_minus_b(H_tag, self.hyp, positive_examples)
             info("Delta =", delta)

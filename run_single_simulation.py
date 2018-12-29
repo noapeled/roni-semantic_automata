@@ -289,6 +289,7 @@ class SingleSimulationRunner(object):
             #             positive_examples)) if quantifier_type in qunatifier_names_to_target_dfa \
             #                            else 'No target automaton defined')
             info('############ Finished simulation for quantifier %s, output in %s' % (quantifier_type, output_directory))
+            info('State of PRNG:', self.randomizer.get_prng().getstate())
             return final_hyp == qunatifier_names_to_target_dfa[quantifier_type]
         else:
             raise ValueError('Unknown quantifier type %s' % quantifier_type)
