@@ -33,11 +33,11 @@ if __name__ == '__main__':
     #      max_set_size=61,
     #      number_of_pairs=50)
 
-    # main('BETWEEN_WITH_FIXED_UNIVERSE_SIZE', 2000, 1.0, 0.95,
-    #      num_simulations=1,
-    #      all_ones=[],
-    #      at_least_ones=3, at_most_plus_1_ones=6, fixed_universe_size=10,
-    #      number_of_positive_examples=50)
+    main('BETWEEN_WITH_FIXED_UNIVERSE_SIZE', 2000, 1.0, 0.95,
+         num_simulations=1,
+         all_ones=[],
+         at_least_ones=3, at_most_plus_1_ones=6, fixed_universe_size=10,
+         number_of_positive_examples=50)
     #
     # main('BETWEEN_WITH_DYNAMIC_UNIVERSE_SIZE', 2500, 1.0, 0.95,
     #      num_simulations=1,
@@ -45,13 +45,13 @@ if __name__ == '__main__':
     #      at_least_ones=5, at_most_ones=61, min_size_of_universe=20,
     #      max_size_of_universe=80, number_of_positive_examples=50)
 
-    main('EXACTLY', 3700, 1.0, 0.96,
-         num_simulations=1,
-         ns=(2, 5, 9),
-         min_sample_for_each_n=5,
-         max_sample_for_each_n=10,
-         min_zeros_per_positive_example=0,
-         max_zeros_per_positive_example=20)
+    # main('EXACTLY', 3700, 1.0, 0.96,
+    #      num_simulations=1,
+    #      ns=(2, 5, 9),
+    #      min_sample_for_each_n=5,
+    #      max_sample_for_each_n=10,
+    #      min_zeros_per_positive_example=0,
+    #      max_zeros_per_positive_example=20)
     #
     # main('ALL_OF_THE_EXACTLY', 3800, 1.0, 0.97,
     #      num_simulations=10,

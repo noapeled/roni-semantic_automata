@@ -26,6 +26,7 @@ class DFA:
         self.accepting = accepting
 
     def __eq__(self, other):
+        # print('self:', self, 'other:', other, sep='\n')
         return isinstance(other, DFA) and \
                self.states == other.states and \
                self.transitions == other.transitions and \

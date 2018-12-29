@@ -30,7 +30,7 @@ def expected_final_hyp_between_with_any_universe_size(lower, upper):
         return ('q%d' % upper), {'0': ('q%d' % upper), '#': 'qF'}
 
     return None if None in (lower, upper) else DFA(
-        states={'q%d' % i for i in range(lower, upper + 1)} | {'qF'},
+        states={'q%d' % i for i in range(upper + 1)} | {'qF'},
         transitions=dict(
             [transition_before_lower(i) for i in range(lower)] +
             [transition_before_upper(i) for i in range(lower, upper)] +
@@ -64,5 +64,5 @@ def expected_final_hyp_exactly(ns):
 if __name__ == '__main__':
     expected_final_hyp_between_with_any_universe_size(3, 6)\
         .plot_transitions('expected_final_hyp_between_3_and_6.png', '.')
-    expected_final_hyp_exactly((2, 5, 9))\
-        .plot_transitions('expected_final_hyp_exactly.png', '.')
+    # expected_final_hyp_exactly((2, 5, 9))\
+    #     .plot_transitions('expected_final_hyp_exactly.png', '.')
