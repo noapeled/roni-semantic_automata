@@ -24,14 +24,14 @@ def main(quantifier_type, initial_temperature, threshold, alpha,
 
 if __name__ == '__main__':
     main('ALL', 1500, 1.0, 0.91,
-         num_simulations=10,
+         num_simulations=1,
          min_set_size=5, max_set_size=61, number_of_pairs=50)
 
-    # main('NONE', 1500, 1.0, 0.93,
-    #      num_simulations=10,
-    #      min_set_size=5,
-    #      max_set_size=61,
-    #      number_of_pairs=50)
+    main('NONE', 1500, 1.0, 0.93,
+         num_simulations=1,
+         min_set_size=5,
+         max_set_size=61,
+         number_of_pairs=50)
     #
     # main('BETWEEN_WITH_FIXED_UNIVERSE_SIZE', 2000, 1.0, 0.95,
     #      num_simulations=10,
