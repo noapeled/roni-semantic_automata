@@ -1,38 +1,32 @@
 import uuid
 from printer import info, set_up_logging
-from functools import partial
-# from multiprocessing.pool import Pool
+from multiprocessing.pool import Pool
 from run_single_simulation import SingleSimulationRunner
 
 
-# def run_single_simulation_for_multiprocessing(args_and_kwargs):
-#     args, kwargs = args_and_kwargs
-#     seed, args_for_simulation = args[0], args[1:]
-#     set_up_logging('out.log')
-#     return SingleSimulationRunner(seed).run_single_simulation(*args_for_simulation, **kwargs)
+def run_single_simulation_for_multiprocessing(args_and_kwargs):
+    args, kwargs = args_and_kwargs
+    seed, args_for_simulation = args[0], args[1:]
+    set_up_logging('out.log')
+    info('##### Task is:', args_and_kwargs)
+    return SingleSimulationRunner(seed).run_single_simulation(*args_for_simulation, **kwargs)
 
 
 def main(base_seed,
          quantifier_type, initial_temperature, threshold, alpha,
          num_simulations,
-         # num_processes=2,
          **kwargs):
-    # pool = Pool(processes=num_processes, maxtasksperchild=1)
-    total_success = 0
-    for i, seed in enumerate(range(base_seed, base_seed + num_simulations)):
-        info('##### Task is:', (seed, quantifier_type, initial_temperature, threshold, alpha), kwargs)
-        success = SingleSimulationRunner(seed)\
-            .run_single_simulation(quantifier_type, initial_temperature, threshold, alpha, **kwargs)
-        info('Finished run %d of %d, return value is: %s' % (i + 1, num_simulations, success))
-        total_success += success
-    info('########### Total success for quantifier %s is %d of %d' % (quantifier_type, total_success, num_simulations))
-    return total_success
+    tasks = [((seed, quantifier_type, initial_temperature, threshold, alpha), kwargs)
+             for seed in range(base_seed, base_seed + num_simulations)]
+    results = Pool(maxtasksperchild=1).map(run_single_simulation_for_multiprocessing, tasks)
+    info('Results per run of quantifier %s are %s', (quantifier_type, list(enumerate(results))))
+    info('########### Total success for quantifier %s is %d of %d' % (quantifier_type, sum(results), num_simulations))
 
 
 if __name__ == '__main__':
     # ============> FOR REPRODUCIBILITY, YOU MUST SET PYTHONHASHSEED=0 IN ENV BEFORE RUNNING <==========
     set_up_logging('out.log')
-    base_seed = uuid.uuid1().int
+    base_seed = 0  # uuid.uuid1().int
     info('-------------- STARTING BATCH OF SIMULATIONS WITH BASE SEED %s ---------' % base_seed)
 
     main(base_seed, 'ALL', 1500, 1.0, 0.91,
