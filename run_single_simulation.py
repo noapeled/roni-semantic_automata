@@ -270,11 +270,13 @@ def run_single_simulation(quantifier_type,
             target_automaton.expected_final_hyp_between_with_any_universe_size(
                 lower=kwargs.get('at_least_ones'),
                 upper=kwargs.get('at_most_ones')),
-        'EXACTLY': target_automaton.expected_final_hyp_exactly(kwargs.get('ns'))
+        'EXACTLY': target_automaton.expected_final_hyp_exactly(kwargs.get('ns')),
+        'ALL_OF_THE_EXACTLY': target_automaton.expected_final_hyp_all_of_the_exactly(kwargs.get('ns'))
     }
     if quantifier_type in quantifier_names_to_functions:
         output_directory, final_hyp, positive_examples = quantifier_names_to_functions[quantifier_type] \
             (initial_temperature, threshold, alpha, *args, **kwargs)
+        final_hyp.plot_transitions('final_hyp', output_directory)
         # with open(os.path.join(output_directory, 'energy_final_hyp_minus_target.csv'), 'w') as final_diff_f:
         #     final_diff_f.write(str(DFA_Annealer.energy_difference_a_minus_b(
         #             final_hyp,
