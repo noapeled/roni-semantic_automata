@@ -18,7 +18,9 @@ def run_batch(base_seed,
               **kwargs):
     tasks = [((seed, quantifier_type, initial_temperature, threshold, alpha), kwargs)
              for seed in range(base_seed, base_seed + num_simulations)]
-    results = Pool(maxtasksperchild=1).map(run_single_simulation_for_multiprocessing, tasks)
+    pool = Pool(maxtasksperchild=1)
+    results = pool.map(run_single_simulation_for_multiprocessing, tasks)
+    pool.close()
     info('Results per run of quantifier %s are %s', (quantifier_type, list(enumerate(results))))
     total_success = sum(results)
     info('########### Total success for quantifier %s is %d of %d' % (quantifier_type, total_success, num_simulations))
