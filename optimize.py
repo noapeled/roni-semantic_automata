@@ -5,13 +5,14 @@ from GPyOpt.methods import BayesianOptimization
 
 
 def f_optimize_all(params, alpha, threshold, num_simulations, run_batch_kwargs):
-    total_success = run_batch(0,
-                     'ALL',
-                     initial_temperature=params[:, 0],
-                     threshold=threshold,
-                     alpha=alpha,
-                     num_simulations=num_simulations,
-                     **run_batch_kwargs)
+    total_success = run_batch(
+        base_seed=0,
+        quantifier_type='ALL',
+        initial_temperature=params[:, 0],
+        threshold=threshold,
+        alpha=alpha,
+        num_simulations=num_simulations,
+        **run_batch_kwargs)
     return total_success / float(num_simulations)
 
 
