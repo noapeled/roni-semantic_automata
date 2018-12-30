@@ -6,11 +6,11 @@ from functools import partial
 from GPyOpt.methods import BayesianOptimization
 
 
-def f_optimize_all(params, alpha, threshold, num_simulations, run_batch_kwargs):
-    info('Starting optimization iteration with:', params, alpha, threshold, num_simulations, run_batch_kwargs)
+def f_optimize(params, quantifier_type, alpha, threshold, num_simulations, run_batch_kwargs):
+    info('Starting optimization iteration with:', params, quantifier_type, alpha, threshold, num_simulations, run_batch_kwargs)
     total_success = run_batch(
         base_seed=0,
-        quantifier_type='ALL',
+        quantifier_type=quantifier_type,
         initial_temperature=float(params[:, 0]),
         threshold=threshold,
         alpha=alpha,
@@ -19,17 +19,19 @@ def f_optimize_all(params, alpha, threshold, num_simulations, run_batch_kwargs):
     return -total_success / float(num_simulations)
 
 
-def optimize(initial_temperature_domain, num_iter_opt_init, num_iter_opt_run, alpha, threshold,
+def optimize(quantifier_type, initial_temperature_domain, num_iter_opt_init, num_iter_opt_run, alpha, threshold,
              num_simulations_in_each_batch, run_batch_kwargs):
     def opt_output_path(path):
-        if not os.path.exists('opt_ALL'):
-            os.makedirs('opt_ALL')
-        return os.path.join('opt_ALL', path)
+        out_dir = 'opt_%s' % quantifier_type
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+        return os.path.join(out_dir, path)
 
     info('Starting optimization')
     bayes_opt = BayesianOptimization(
         initial_design_numdata=num_iter_opt_init,
-        f=partial(f_optimize_all,
+        f=partial(f_optimize,
+                  quantifier_type=quantifier_type,
                   alpha=alpha,
                   threshold=threshold,
                   num_simulations=num_simulations_in_each_batch,
@@ -52,6 +54,7 @@ def optimize(initial_temperature_domain, num_iter_opt_init, num_iter_opt_run, al
 if __name__ == '__main__':
     set_up_logging('out.log')
     optimize(
+        'ALL',
         initial_temperature_domain=(1, 10000),
         num_iter_opt_init=5,
         num_iter_opt_run=15,
