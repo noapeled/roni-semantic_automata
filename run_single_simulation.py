@@ -10,6 +10,12 @@ from binary_representation import get_binary_representation
 import target_automaton
 
 
+def run_dir(quantifier_type, initial_temperature, alpha, threshold):
+    return os.path.join('semantic_automata_simulations',
+                        quantifier_type,
+                        ('tempinit[%s]alpha[%s]thresh[%s]' % (initial_temperature, alpha, threshold)))
+
+
 class SingleSimulationRunner(object):
     def __init__(self, seed):
         self.randomizer = Randomizer(seed)
@@ -156,16 +162,8 @@ class SingleSimulationRunner(object):
 
     def create_output_directory(self, quantifier_type, additional_parameters_to_persist,
                                 positive_examples, initial_temperature, threshold, alpha):
-        # folder_name = ('tempinit[%s]_thres_[%s]_alpha_[%s]_runid_[%s_%s]_' % (initial_temperature, threshold, alpha, os.getpid(), self.randomizer.get_prng().randint(1, 10 ** 6))) + \
-        #               '_'.join('%s[%s]' % (pname, pval) for pname, pval in sorted(additional_parameters_to_persist.items()))
-        # folder_name = 'tempinit[%s]_thres_[%s]_alpha_[%s]_runid_[%s_%s]_' % (initial_temperature, threshold, alpha, os.getpid(), self.randomizer.get_prng().randint(1, 10 ** 6))
-        f1 = os.path.join('tempinit[' + str(initial_temperature) + ']' + \
-                          'thresh[' + str(threshold) + ']' + \
-                          'alpha[' + str(alpha) + ']',
-                          'runid[' + uuid.uuid4().hex + ']')
-        # f2 = os.sep.join(str(pname) + '[' + str(pval) + ']' for pname, pval in sorted(additional_parameters_to_persist.items()))
-        folder_name = f1  # os.path.join(f1, f2)
-        output_directory = os.path.join('semantic_automata_simulations', quantifier_type, folder_name)
+        output_directory = os.path.join(run_dir(quantifier_type, initial_temperature, alpha, threshold),
+                                        ('runid[%s]' % uuid.uuid4().hex))
         os.makedirs(output_directory)
         with open(os.path.join(output_directory, 'parameters.csv'), 'w') as params_f:
             params_f.write('initial_temperature,%s\n' % initial_temperature)
@@ -282,6 +280,9 @@ class SingleSimulationRunner(object):
             output_directory, final_hyp, positive_examples = quantifier_names_to_functions[quantifier_type] \
                 (initial_temperature, threshold, alpha, *args, **kwargs)
             final_hyp.plot_transitions('final_hyp', output_directory)
+            is_success = (final_hyp == qunatifier_names_to_target_dfa[quantifier_type])
+            with open(os.path.join(output_directory, 'is_success.txt'), 'w') as f_success:
+                f_success.write(str(is_success))
             # with open(os.path.join(output_directory, 'energy_final_hyp_minus_target.csv'), 'w') as final_diff_f:
             #     final_diff_f.write(str(DFA_Annealer.energy_difference_a_minus_b(
             #             final_hyp,
@@ -289,7 +290,7 @@ class SingleSimulationRunner(object):
             #             positive_examples)) if quantifier_type in qunatifier_names_to_target_dfa \
             #                            else 'No target automaton defined')
             info('############ Finished simulation for quantifier %s, output in %s' % (quantifier_type, output_directory))
-            return final_hyp == qunatifier_names_to_target_dfa[quantifier_type]
+            return is_success
         else:
             raise ValueError('Unknown quantifier type %s' % quantifier_type)
 

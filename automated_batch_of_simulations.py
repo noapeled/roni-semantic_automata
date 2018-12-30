@@ -1,7 +1,8 @@
+import os
 import uuid
 from printer import info, set_up_logging
 from multiprocessing.pool import Pool
-from run_single_simulation import SingleSimulationRunner
+from run_single_simulation import SingleSimulationRunner, run_dir
 
 
 def run_single_simulation_for_multiprocessing(args_and_kwargs):
@@ -20,9 +21,11 @@ def run_batch(base_seed,
              for seed in range(base_seed, base_seed + num_simulations)]
     with Pool(maxtasksperchild=1) as pool:
         results = pool.map(run_single_simulation_for_multiprocessing, tasks)
-        info('Results per run of quantifier %s are %s', (quantifier_type, list(enumerate(results))))
         total_success = sum(results)
         info('########### Total success for quantifier %s is %d of %d' % (quantifier_type, total_success, num_simulations))
+        with open(os.path.join(run_dir(quantifier_type, initial_temperature, alpha, threshold), 'num_success.csv'), 'w') as f_num_success:
+            f_num_success.write('percent_success,total_success,num_simulations,quantifier,base_seed\n%f,%d,%d,%s,%s\n' %
+                                (total_success / float(num_simulations), total_success, num_simulations, quantifier_type, base_seed))
         return total_success
 
 
@@ -32,8 +35,8 @@ if __name__ == '__main__':
     base_seed = uuid.uuid1().int
     info('-------------- STARTING BATCH OF SIMULATIONS WITH BASE SEED %s ---------' % base_seed)
 
-    run_batch(base_seed, 'ALL', 1500, 1.0, 0.91,
-              num_simulations=1,
+    run_batch(base_seed, 'ALL', 700, 1.0, 0.96,
+              num_simulations=3,
               min_set_size=5, max_set_size=61, number_of_pairs=50)
 
     # run_batch(base_seed, 'NONE', 1500, 1.0, 0.93,
