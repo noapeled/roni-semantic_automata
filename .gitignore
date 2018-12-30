@@ -1,3 +1,4 @@
+*.pyc
 *.log
 semantic_automata_simulations/
 venv/
