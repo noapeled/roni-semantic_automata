@@ -11,7 +11,7 @@ import target_automaton
 
 
 def run_dir(quantifier_type, initial_temperature, alpha, threshold):
-    return os.path.join('semantic_automata_simulations',
+    return os.path.join('sa_simulations',
                         quantifier_type,
                         ('tempinit[%s]alpha[%s]thresh[%s]' % (initial_temperature, alpha, threshold)))
 
