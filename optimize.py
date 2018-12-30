@@ -121,8 +121,8 @@ if __name__ == '__main__':
     #     run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50))
     optimize_inittemp_and_alpha(
         'ALL',
-        alpha_domain=(1E-8, 1),
-        initial_temperature_domain=(1, 10000),
+        alpha_domain=(1E-8, 0.999),
+        initial_temperature_domain=(1, 5000),
         num_iter_opt_init=5,
         num_iter_opt_run=50,
         threshold=1,
