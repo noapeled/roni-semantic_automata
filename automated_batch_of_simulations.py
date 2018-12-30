@@ -12,15 +12,17 @@ def run_single_simulation_for_multiprocessing(args_and_kwargs):
     return SingleSimulationRunner(seed).run_single_simulation(*args_for_simulation, **kwargs)
 
 
-def main(base_seed,
-         quantifier_type, initial_temperature, threshold, alpha,
-         num_simulations,
-         **kwargs):
+def run_batch(base_seed,
+              quantifier_type, initial_temperature, threshold, alpha,
+              num_simulations,
+              **kwargs):
     tasks = [((seed, quantifier_type, initial_temperature, threshold, alpha), kwargs)
              for seed in range(base_seed, base_seed + num_simulations)]
     results = Pool(maxtasksperchild=1).map(run_single_simulation_for_multiprocessing, tasks)
     info('Results per run of quantifier %s are %s', (quantifier_type, list(enumerate(results))))
-    info('########### Total success for quantifier %s is %d of %d' % (quantifier_type, sum(results), num_simulations))
+    total_success = sum(results)
+    info('########### Total success for quantifier %s is %d of %d' % (quantifier_type, total_success, num_simulations))
+    return total_success
 
 
 if __name__ == '__main__':
@@ -29,9 +31,9 @@ if __name__ == '__main__':
     base_seed = uuid.uuid1().int
     info('-------------- STARTING BATCH OF SIMULATIONS WITH BASE SEED %s ---------' % base_seed)
 
-    main(base_seed, 'ALL', 1500, 1.0, 0.91,
-         num_simulations=10,
-         min_set_size=5, max_set_size=61, number_of_pairs=50)
+    run_batch(base_seed, 'ALL', 1500, 1.0, 0.91,
+              num_simulations=1,
+              min_set_size=5, max_set_size=61, number_of_pairs=50)
 
     # main(base_seed, 'NONE', 1500, 1.0, 0.93,
     #      num_simulations=10,
