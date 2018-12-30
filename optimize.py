@@ -1,3 +1,5 @@
+from printer import set_up_logging, info
+import os
 import pickle
 from automated_batch_of_simulations import run_batch
 from functools import partial
@@ -5,10 +7,11 @@ from GPyOpt.methods import BayesianOptimization
 
 
 def f_optimize_all(params, alpha, threshold, num_simulations, run_batch_kwargs):
+    info('Starting optimization iteration with:', params, alpha, threshold, num_simulations, run_batch_kwargs)
     total_success = run_batch(
         base_seed=0,
         quantifier_type='ALL',
-        initial_temperature=params[:, 0],
+        initial_temperature=float(params[:, 0]),
         threshold=threshold,
         alpha=alpha,
         num_simulations=num_simulations,
@@ -18,6 +21,10 @@ def f_optimize_all(params, alpha, threshold, num_simulations, run_batch_kwargs):
 
 def optimize(initial_temperature_domain, num_iter_opt_init, num_iter_opt_run, alpha, threshold,
              num_simulations_in_each_batch, run_batch_kwargs):
+    def opt_output_path(path):
+        return os.path.join('opt_ALL', path)
+
+    info('Starting optimization')
     bayes_opt = BayesianOptimization(
         initial_design_numdata=num_iter_opt_init,
         f=partial(f_optimize_all,
@@ -30,16 +37,18 @@ def optimize(initial_temperature_domain, num_iter_opt_init, num_iter_opt_run, al
         ])
     bayes_opt.run_optimization(max_iter=num_iter_opt_run,
                                verbosity=True,
-                               report_file='opt_report.txt',
-                               evaluations_file='opt_evaluations.txt',
-                               models_file='opt_models.txt')
-    with open('bayes_opt.pkl', 'wb') as f_pkl:
+                               report_file=opt_output_path('opt_report.txt'),
+                               evaluations_file=opt_output_path('opt_evaluations.txt'),
+                               models_file=opt_output_path('opt_models.txt'))
+    info('Finished optimization, saving results')
+    with open(opt_output_path('bayes_opt.pkl'), 'wb') as f_pkl:
         pickle.dump(bayes_opt, f_pkl)
-    bayes_opt.plot_convergence('opt_convergence.png')
-    bayes_opt.plot_acquisition('opt_acquisition.png')
+    bayes_opt.plot_convergence(opt_output_path('opt_convergence.png'))
+    bayes_opt.plot_acquisition(opt_output_path('opt_acquisition.png'))
 
 
 if __name__ == '__main__':
+    set_up_logging('out.log')
     optimize(
         initial_temperature_domain=(1, 10000),
         num_iter_opt_init=5,
