@@ -22,6 +22,8 @@ def f_optimize_all(params, alpha, threshold, num_simulations, run_batch_kwargs):
 def optimize(initial_temperature_domain, num_iter_opt_init, num_iter_opt_run, alpha, threshold,
              num_simulations_in_each_batch, run_batch_kwargs):
     def opt_output_path(path):
+        if not os.path.exists('opt_ALL'):
+            os.makedirs('opt_ALL')
         return os.path.join('opt_ALL', path)
 
     info('Starting optimization')
