@@ -24,7 +24,8 @@ class Simulated_annealing_learner:
         @param output_directory: as the name implies.
 
         """
-        iter_counter = 0 
+        assert (0 < alpha < 1) and (0 < threshold) and (self.T > 0)
+        iter_counter = 0
         p = None
         # Initial hypothesis
         self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, self.annealer.metric_calc(self.hyp, positive_examples)),
