@@ -46,5 +46,5 @@ if __name__ == '__main__':
         num_iter_opt_run=15,
         alpha=0.96,
         threshold=1,
-        num_simulations_in_each_batch=1,
+        num_simulations_in_each_batch=100,
         run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50))
