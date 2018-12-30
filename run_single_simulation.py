@@ -176,13 +176,6 @@ class SingleSimulationRunner(object):
         return output_directory
 
 
-    def cleanup_output_directory(self, output_directory):
-        gv_directory = os.path.join(output_directory, 'gv')
-        os.mkdir(gv_directory)
-        for file in glob.glob(os.path.join(output_directory, '*.gv')):
-            shutil.move(file, gv_directory)
-
-
     def __simulate_with_data(self, quantifier_type, additional_parameters_to_persist,
                              data, initial_temperature, threshold, alpha):
         positive_examples = [get_binary_representation(self.randomizer, set_a, set_b) for set_a, set_b in data]
@@ -191,7 +184,6 @@ class SingleSimulationRunner(object):
         annealer = DFA_Annealer(self.randomizer.seed)
         learner = Simulated_annealing_learner(self.randomizer.seed, initial_temperature, data, annealer)
         final_hyp = learner.logger(positive_examples, output_directory, threshold, alpha)[0]
-        self.cleanup_output_directory(output_directory)
         return output_directory, final_hyp, positive_examples
 
 
