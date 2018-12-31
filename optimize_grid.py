@@ -11,6 +11,7 @@ from automated_batch_of_simulations import run_batch
 def heatmap_of_results(quantifier, results_csv_path):
     fig, ax = plt.subplots(figsize=(12, 10))
     plt.rcParams.update({'font.size': 16})
+    sns.set(font_scale=1.7)
     sns.heatmap(
         ax=ax,
         data=pd.read_csv(results_csv_path)\
