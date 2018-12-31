@@ -41,7 +41,7 @@ def optimize_only_inittemp(quantifier_type, initial_temperature_domain, num_iter
                            num_simulations_in_each_batch, run_batch_kwargs):
 
     def opt_output_path(path):
-        out_dir = os.path.join('opt_only_temperature', quantifier_type)
+        out_dir = os.path.join('opt_bayes', 'opt_only_temperature', quantifier_type)
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         return os.path.join(out_dir, path)
@@ -73,7 +73,7 @@ def optimize_only_inittemp(quantifier_type, initial_temperature_domain, num_iter
 def optimize_inittemp_and_alpha(quantifier_type, alpha_domain, initial_temperature_domain, num_iter_opt_init, num_iter_opt_run, threshold,
                                 num_simulations_in_each_batch, run_batch_kwargs):
     def opt_output_path(path):
-        out_dir = os.path.join('opt_temperature_and_alpha', quantifier_type)
+        out_dir = os.path.join('opt_bayes', 'opt_temperature_and_alpha', quantifier_type)
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         return os.path.join(out_dir, path)
