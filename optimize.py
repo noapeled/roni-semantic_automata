@@ -1,3 +1,4 @@
+import numpy as np
 from printer import set_up_logging, info
 import os
 import pickle
@@ -83,10 +84,7 @@ def optimize_inittemp_and_alpha(quantifier_type, alpha_domain, initial_temperatu
                   threshold=threshold,
                   num_simulations=num_simulations_in_each_batch,
                   run_batch_kwargs=run_batch_kwargs),
-        domain=[
-            dict(name='initial_temperature', type='continuous', domain=initial_temperature_domain),
-            dict(name='alpha', type='continuous', domain=alpha_domain)
-        ])
+        domain=[initial_temperature_domain, alpha_domain])
     bayes_opt.run_optimization(max_iter=num_iter_opt_run,
                                verbosity=True,
                                report_file=opt_output_path('opt_report.txt'),
@@ -134,8 +132,8 @@ if __name__ == '__main__':
 
     optimize_inittemp_and_alpha(
         'NONE',
-        alpha_domain=(0.01, 0.99),
-        initial_temperature_domain=(1, 10000),
+        alpha_domain=dict(name='alpha', type='discrete', domain=np.arange(0.01, 1.0, 0.01)),
+        initial_temperature_domain=dict(name='initial_temperature', type='discrete', domain=np.arange(100, 10000, 100)),
         num_iter_opt_init=5,
         num_iter_opt_run=50,
         threshold=1,
