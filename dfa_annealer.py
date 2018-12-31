@@ -249,7 +249,7 @@ class DFA_Annealer:
         # Check whether the neighbor dfa recognizes all couples in data
         # If not, return old dfa (i.e don't use neighbor). Otherwise, return neighbor
         for set_a, set_b in data:
-            bin_rep = get_binary_representation(self.randomizer, set_a, set_b)
+            bin_rep = get_binary_representation(Randomizer(self.randomizer.seed), set_a, set_b)
             if not neighbor.recognize(bin_rep):
                 info("Neighbor didn't recognize one of the pairs in data: %s" % bin_rep)
                 return None

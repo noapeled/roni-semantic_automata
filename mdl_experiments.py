@@ -19,7 +19,7 @@ def get_positive_examples_for_exactly(
         randomizer,
         min_zeros_per_positive_example, max_zeros_per_positive_example,
         min_sample_for_each_n, max_sample_for_each_n, n1, n2):
-    return [get_binary_representation(randomizer, i, j).get_binary_representation(shuffle=True) for i, j in
+    return [get_binary_representation(Randomizer(randomizer.seed), i, j).get_binary_representation(shuffle=True) for i, j in
             make_list_of_set_pairs_for_determiner_EXACTLY(
                 (n1, n2),
                 min_sample_for_each_n,

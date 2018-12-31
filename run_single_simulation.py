@@ -179,7 +179,8 @@ class SingleSimulationRunner(object):
 
     def __simulate_with_data(self, quantifier_type, additional_parameters_to_persist,
                              data, initial_temperature, threshold, alpha):
-        positive_examples = [get_binary_representation(self.randomizer, set_a, set_b) for set_a, set_b in data]
+        positive_examples = [get_binary_representation(Randomizer(self.randomizer.seed), set_a, set_b)
+                             for set_a, set_b in data]
         output_directory = self.create_output_directory(quantifier_type, additional_parameters_to_persist,
                                                    positive_examples, initial_temperature, threshold, alpha)
         annealer = DFA_Annealer(self.randomizer.seed)
