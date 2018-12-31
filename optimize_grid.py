@@ -67,12 +67,12 @@ def optimize_inittemp_and_alpha(quantifier_type, alpha_domain, initial_temperatu
 
 if __name__ == '__main__':
     set_up_logging('out.log')
-    # optimize_inittemp_and_alpha(
-    #     quantifier_type='ALL',
-    #     alpha_domain=(round(x, 2) for x in np.arange(0.8, 1.0, 0.01)),
-    #     initial_temperature_domain=range(500, 10000, 500),
-    #     threshold=1,
-    #     num_simulations_in_each_batch=100,
-    #     run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50)
-    # )
-    heatmap_of_results('ALL', os.path.join('opt_grid', 'opt_temperature_and_alpha', 'ALL', 'grid_eval.csv'))
+    optimize_inittemp_and_alpha(
+        quantifier_type='NONE',
+        alpha_domain=(round(x, 2) for x in np.arange(0.8, 1.0, 0.01)),
+        initial_temperature_domain=range(500, 10000, 500),
+        threshold=1,
+        num_simulations_in_each_batch=100,
+        run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50)
+    )
+    heatmap_of_results('NONE', os.path.join('opt_grid', 'opt_temperature_and_alpha', 'NONE', 'grid_eval.csv'))
