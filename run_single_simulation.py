@@ -17,7 +17,8 @@ def run_dir(quantifier_type, initial_temperature, alpha, threshold):
 
 
 class SingleSimulationRunner(object):
-    def __init__(self, seed):
+    def __init__(self, create_plots, seed):
+        self.create_plots = create_plots
         self.randomizer = Randomizer(seed)
 
     def make_list_of_set_pairs_for_determiner_EXACTLY(self,
@@ -183,7 +184,7 @@ class SingleSimulationRunner(object):
                                                    positive_examples, initial_temperature, threshold, alpha)
         annealer = DFA_Annealer(self.randomizer.seed)
         learner = Simulated_annealing_learner(self.randomizer.seed, initial_temperature, data, annealer)
-        final_hyp = learner.logger(positive_examples, output_directory, threshold, alpha)[0]
+        final_hyp = learner.logger(self.create_plots, positive_examples, output_directory, threshold, alpha)[0]
         return output_directory, final_hyp, positive_examples
 
 

@@ -11,6 +11,7 @@ def f_only_inittemp(params, quantifier_type, alpha, threshold, num_simulations, 
     info('Starting optimization iteration with:', params, quantifier_type, alpha, threshold, num_simulations,
          run_batch_kwargs)
     total_success = run_batch(
+        create_plots=False,
         base_seed=0,
         quantifier_type=quantifier_type,
         initial_temperature=float(params[:, 0]),
@@ -25,6 +26,7 @@ def f_inittemp_and_alpha(params, quantifier_type, threshold, num_simulations, ru
     info('Starting optimization iteration with:', params, quantifier_type, threshold, num_simulations,
          run_batch_kwargs)
     total_success = run_batch(
+        create_plots=False,
         base_seed=0,
         quantifier_type=quantifier_type,
         initial_temperature=float(params[:, 0]),

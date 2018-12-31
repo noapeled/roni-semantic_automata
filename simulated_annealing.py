@@ -15,21 +15,14 @@ class Simulated_annealing_learner:
         self.hyp = self.annealer.initial_hypothesis()
         self.creation_time = datetime.datetime.now()
     
-    def simulated_annealing(self, positive_examples, output_directory, threshold, alpha):
-        """
-        Performs simulated annealing.
-
-        @param threshold: stop threshold for the temperature.
-        @param alpha: The decrease factor of the temperature.
-        @param output_directory: as the name implies.
-
-        """
+    def simulated_annealing(self, create_plots, positive_examples, output_directory, threshold, alpha):
         assert (0 < alpha < 1) and (0 < threshold) and (self.T > 0)
         iter_counter = 0
         p = None
-        # Initial hypothesis
-        self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, self.annealer.metric_calc(self.hyp, positive_examples)),
-                                  output_directory)
+        if create_plots:
+            # Initial hypothesis
+            self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, self.annealer.metric_calc(self.hyp, positive_examples)),
+                                      output_directory)
 
         while self.T > threshold:
             iter_counter += 1 
@@ -48,15 +41,16 @@ class Simulated_annealing_learner:
             else:
                 info("Didn't change hypothesis\n")
             energy = self.annealer.metric_calc(self.hyp, positive_examples)
-            self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, energy), output_directory)
+            if create_plots:
+                self.hyp.plot_transitions('hyp_%d ; E_%s' % (iter_counter, energy), output_directory)
             self.T *= alpha
         info("CHOSEN HYPOTHESIS:\n", self.hyp)
 
         return self.hyp, positive_examples
 
-    def logger(self, positive_examples, output_directory, threshold, alpha):
+    def logger(self, create_plots, positive_examples, output_directory, threshold, alpha):
         info("# APPLYING LEARNER ON THE FOLLOWING POSITIVE EXAMPLES: %s" % ','.join(positive_examples))
         info("\nInitial temperature:", self.T, ", Threshold:", threshold, ", Alpha:" , alpha)
         info("\n# INITIAL HYPOTHESIS:\n", self.hyp)
         info("\n")
-        return self.simulated_annealing(positive_examples, output_directory, threshold, alpha)
+        return self.simulated_annealing(create_plots, positive_examples, output_directory, threshold, alpha)
