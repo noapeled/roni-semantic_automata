@@ -20,8 +20,8 @@ def f_inittemp_and_alpha(alpha, initial_temperature, quantifier_type, threshold,
     return -total_success / float(num_simulations)
 
 
-def optimize_inittemp_and_alpha(quantifier_type, alpha_domain, initial_temperature_domain, num_iter_opt_init,
-                                num_iter_opt_run, threshold, num_simulations_in_each_batch, run_batch_kwargs):
+def optimize_inittemp_and_alpha(quantifier_type, alpha_domain, initial_temperature_domain,
+                                threshold, num_simulations_in_each_batch, run_batch_kwargs):
     def opt_output_path(path):
         out_dir = os.path.join('opt_grid', 'opt_temperature_and_alpha', quantifier_type)
         if not os.path.exists(out_dir):
@@ -51,8 +51,6 @@ if __name__ == '__main__':
         quantifier_type='ALL',
         alpha_domain=(round(x, 2) for x in np.arange(0.8, 1.0, 0.01)),
         initial_temperature_domain=range(500, 10000, 500),
-        num_iter_opt_init=1,
-        num_iter_opt_run=1,
         threshold=1,
         num_simulations_in_each_batch=100,
         run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50)
