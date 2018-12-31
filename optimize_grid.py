@@ -1,4 +1,4 @@
-from sklearn.grid_search import ParameterGrid
+import itertools
 import numpy as np
 from printer import set_up_logging, info
 import os
@@ -31,9 +31,7 @@ def optimize_inittemp_and_alpha(quantifier_type, alpha_domain, initial_temperatu
     info('Starting grid optimization')
     with open(opt_output_path('grid_eval.csv'), 'w') as f_results:
         f_results.write('evaluation,qunatifier,alpha,initial_temperature,threshold\n')
-        for params in ParameterGrid({'initial_temperature': initial_temperature_domain, 'alpha': alpha_domain}):
-            alpha = params['alpha']
-            init_temp = params['initial_temperature']
+        for alpha, init_temp in itertools.product(alpha_domain, initial_temperature_domain):
             f_value = f_inittemp_and_alpha(
                 alpha=alpha,
                 initial_temperature=init_temp,
