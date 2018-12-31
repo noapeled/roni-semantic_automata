@@ -8,7 +8,7 @@ from GPyOpt.methods import BayesianOptimization
 
 
 def f_only_inittemp(params, quantifier_type, alpha, threshold, num_simulations, run_batch_kwargs):
-    info('Starting optimization iteration with:', params, quantifier_type, alpha, threshold, num_simulations,
+    info('Starting Bayesian optimization iteration with:', params, quantifier_type, alpha, threshold, num_simulations,
          run_batch_kwargs)
     total_success = run_batch(
         create_plots=False,
@@ -23,7 +23,7 @@ def f_only_inittemp(params, quantifier_type, alpha, threshold, num_simulations, 
 
 
 def f_inittemp_and_alpha(params, quantifier_type, threshold, num_simulations, run_batch_kwargs):
-    info('Starting optimization iteration with:', params, quantifier_type, threshold, num_simulations,
+    info('Starting Bayesian optimization iteration with:', params, quantifier_type, threshold, num_simulations,
          run_batch_kwargs)
     total_success = run_batch(
         create_plots=False,
@@ -46,7 +46,7 @@ def optimize_only_inittemp(quantifier_type, initial_temperature_domain, num_iter
             os.makedirs(out_dir)
         return os.path.join(out_dir, path)
 
-    info('Starting optimization')
+    info('Starting Bayesian optimization')
     bayes_opt = BayesianOptimization(
         initial_design_numdata=num_iter_opt_init,
         f=partial(f_only_inittemp,
@@ -63,7 +63,7 @@ def optimize_only_inittemp(quantifier_type, initial_temperature_domain, num_iter
                                report_file=opt_output_path('opt_report.txt'),
                                evaluations_file=opt_output_path('opt_evaluations.txt'),
                                models_file=opt_output_path('opt_models.txt'))
-    info('Finished optimization, saving plots and pickle')
+    info('Finished Bayesian optimization, saving plots and pickle')
     with open(opt_output_path('bayes_opt.pkl'), 'wb') as f_pkl:
         pickle.dump(bayes_opt, f_pkl)
     bayes_opt.plot_convergence(opt_output_path('opt_convergence.png'))
@@ -78,7 +78,7 @@ def optimize_inittemp_and_alpha(quantifier_type, alpha_domain, initial_temperatu
             os.makedirs(out_dir)
         return os.path.join(out_dir, path)
 
-    info('Starting optimization')
+    info('Starting Bayesian optimization')
     bayes_opt = BayesianOptimization(
         initial_design_numdata=num_iter_opt_init,
         f=partial(f_inittemp_and_alpha,
@@ -92,7 +92,7 @@ def optimize_inittemp_and_alpha(quantifier_type, alpha_domain, initial_temperatu
                                report_file=opt_output_path('opt_report.txt'),
                                evaluations_file=opt_output_path('opt_evaluations.txt'),
                                models_file=opt_output_path('opt_models.txt'))
-    info('Finished optimization, saving plots and pickle')
+    info('Finished Bayesian optimization, saving plots and pickle')
     with open(opt_output_path('bayes_opt.pkl'), 'wb') as f_pkl:
         pickle.dump(bayes_opt, f_pkl)
     bayes_opt.plot_convergence(opt_output_path('opt_convergence.png'))
