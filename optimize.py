@@ -101,6 +101,7 @@ def optimize_inittemp_and_alpha(quantifier_type, alpha_domain, initial_temperatu
 
 if __name__ == '__main__':
     set_up_logging('out.log')
+
     # optimize_only_inittemp(
     #     'ALL',
     #     initial_temperature_domain=(1, 2),
@@ -110,6 +111,7 @@ if __name__ == '__main__':
     #     threshold=1,
     #     num_simulations_in_each_batch=1,
     #     run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50))
+
     # optimize_inittemp_and_alpha(
     #     'ALL',
     #     alpha_domain=(1E-8, 1),
@@ -119,8 +121,19 @@ if __name__ == '__main__':
     #     threshold=1,
     #     num_simulations_in_each_batch=1,
     #     run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50))
+
+    # optimize_inittemp_and_alpha(
+    #     'ALL',
+    #     alpha_domain=(0.01, 0.99),
+    #     initial_temperature_domain=(1, 10000),
+    #     num_iter_opt_init=5,
+    #     num_iter_opt_run=50,
+    #     threshold=1,
+    #     num_simulations_in_each_batch=100,
+    #     run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50))
+
     optimize_inittemp_and_alpha(
-        'ALL',
+        'NONE',
         alpha_domain=(0.01, 0.99),
         initial_temperature_domain=(1, 10000),
         num_iter_opt_init=5,
