@@ -122,22 +122,22 @@ if __name__ == '__main__':
     #     num_simulations_in_each_batch=1,
     #     run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50))
 
-    # optimize_inittemp_and_alpha(
-    #     'ALL',
-    #     alpha_domain=(0.01, 0.99),
-    #     initial_temperature_domain=(1, 10000),
-    #     num_iter_opt_init=5,
-    #     num_iter_opt_run=50,
-    #     threshold=1,
-    #     num_simulations_in_each_batch=100,
-    #     run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50))
+    optimize_inittemp_and_alpha(
+        'ALL',
+        alpha_domain=dict(name='alpha', type='discrete', domain=np.arange(0.01, 1.0, 0.01)),
+        initial_temperature_domain=dict(name='initial_temperature', type='discrete', domain=np.arange(100, 10000, 100)),
+        num_iter_opt_init=10,
+        num_iter_opt_run=500,
+        threshold=1,
+        num_simulations_in_each_batch=100,
+        run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50))
 
     optimize_inittemp_and_alpha(
         'NONE',
         alpha_domain=dict(name='alpha', type='discrete', domain=np.arange(0.01, 1.0, 0.01)),
         initial_temperature_domain=dict(name='initial_temperature', type='discrete', domain=np.arange(100, 10000, 100)),
-        num_iter_opt_init=5,
-        num_iter_opt_run=50,
+        num_iter_opt_init=10,
+        num_iter_opt_run=500,
         threshold=1,
         num_simulations_in_each_batch=100,
         run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50))
