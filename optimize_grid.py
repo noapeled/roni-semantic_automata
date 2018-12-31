@@ -76,36 +76,39 @@ def optimize_inittemp_and_alpha(quantifier_type, alpha_domain, initial_temperatu
 
 
 def opt_grid_all():
+    qdet_name = 'ALL'
     optimize_inittemp_and_alpha(
-        quantifier_type='ALL',
+        quantifier_type=qdet_name,
         alpha_domain=(round(x, 2) for x in np.arange(0.8, 1.0, 0.01)),
         initial_temperature_domain=range(500, 10000, 500),
         threshold=1,
         num_simulations_in_each_batch=100,
         run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50)
     )
-    heatmap_of_results('ALL', os.path.join('opt_grid', 'opt_temperature_and_alpha', 'ALL', 'grid_eval.csv'))
-    print(best_parameters(os.path.join('opt_grid', 'opt_temperature_and_alpha', 'ALL', 'grid_eval.csv'),
+    heatmap_of_results(qdet_name, os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'))
+    print(best_parameters(os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'),
                           is_alpha_more_important_than_inittemp=False))
 
 
 def opt_grid_none():
+    qdet_name = 'NONE'
     optimize_inittemp_and_alpha(
-        quantifier_type='NONE',
+        quantifier_type=qdet_name,
         alpha_domain=(round(x, 2) for x in np.arange(0.8, 1.0, 0.01)),
         initial_temperature_domain=range(500, 10000, 500),
         threshold=1,
         num_simulations_in_each_batch=100,
         run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50)
     )
-    heatmap_of_results('NONE', os.path.join('opt_grid', 'opt_temperature_and_alpha', 'NONE', 'grid_eval.csv'))
-    print(best_parameters(os.path.join('opt_grid', 'opt_temperature_and_alpha', 'NONE', 'grid_eval.csv'),
+    heatmap_of_results(qdet_name, os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'))
+    print(best_parameters(os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'),
                           is_alpha_more_important_than_inittemp=False))
 
 
 def opt_grid_exactly():
+    qdet_name = 'EXACTLY'
     optimize_inittemp_and_alpha(
-        quantifier_type='EXACTLY',
+        quantifier_type=qdet_name,
         alpha_domain=(round(x, 2) for x in np.arange(0.8, 1.0, 0.01)),
         initial_temperature_domain=range(500, 10000, 500),
         threshold=1,
@@ -117,11 +120,66 @@ def opt_grid_exactly():
             min_zeros_per_positive_example=0,
             max_zeros_per_positive_example=20)
     )
-    heatmap_of_results('EXACTLY', os.path.join('opt_grid', 'opt_temperature_and_alpha', 'EXACTLY', 'grid_eval.csv'))
-    print(best_parameters(os.path.join('opt_grid', 'opt_temperature_and_alpha', 'EXACTLY', 'grid_eval.csv'),
+    heatmap_of_results(qdet_name, os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'))
+    print(best_parameters(os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'),
+                          is_alpha_more_important_than_inittemp=False))
+
+
+def opt_grid_between_fixed_universe_size():
+    qdet_name = 'BETWEEN_WITH_FIXED_UNIVERSE_SIZE'
+    optimize_inittemp_and_alpha(
+        quantifier_type=qdet_name,
+        alpha_domain=(round(x, 2) for x in np.arange(0.8, 1.0, 0.01)),
+        initial_temperature_domain=range(500, 10000, 500),
+        threshold=1,
+        num_simulations_in_each_batch=100,
+        run_batch_kwargs=dict(
+            all_ones=[],
+            at_least_ones=3, at_most_plus_1_ones=6, fixed_universe_size=10,
+            number_of_positive_examples=50)
+
+        )
+    heatmap_of_results(qdet_name, os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'))
+    print(best_parameters(os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'),
+                          is_alpha_more_important_than_inittemp=False))
+
+
+def opt_grid_between_dynamic_universe_size():
+    qdet_name = 'BETWEEN_WITH_DYNAMIC_UNIVERSE_SIZE'
+    optimize_inittemp_and_alpha(
+        quantifier_type=qdet_name,
+        alpha_domain=(round(x, 2) for x in np.arange(0.8, 1.0, 0.01)),
+        initial_temperature_domain=range(500, 10000, 500),
+        threshold=1,
+        num_simulations_in_each_batch=100,
+        run_batch_kwargs=dict(
+            add_examples_which_are_all_ones_of_these_lengths=[],
+            at_least_ones=5, at_most_ones=61, min_size_of_universe=20,
+            max_size_of_universe=80, number_of_positive_examples=50)
+        )
+    heatmap_of_results(qdet_name, os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'))
+    print(best_parameters(os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'),
+                          is_alpha_more_important_than_inittemp=False))
+
+
+def opt_grid_all_of_the_exactly():
+    qdet_name = 'ALL_OF_THE_EXACTLY'
+    optimize_inittemp_and_alpha(
+        quantifier_type=qdet_name,
+        alpha_domain=(round(x, 2) for x in np.arange(0.8, 1.0, 0.01)),
+        initial_temperature_domain=range(500, 10000, 500),
+        threshold=1,
+        num_simulations_in_each_batch=100,
+        run_batch_kwargs=dict(
+            ns=(2, 5, 9), min_sample_for_each_n=5, max_sample_for_each_n=10)
+        )
+    heatmap_of_results(qdet_name, os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'))
+    print(best_parameters(os.path.join('opt_grid', 'opt_temperature_and_alpha', qdet_name, 'grid_eval.csv'),
                           is_alpha_more_important_than_inittemp=False))
 
 
 if __name__ == '__main__':
     set_up_logging('out.log')
-    opt_grid_exactly()
+    opt_grid_all_of_the_exactly()
+    opt_grid_between_dynamic_universe_size()
+    opt_grid_between_fixed_universe_size()
