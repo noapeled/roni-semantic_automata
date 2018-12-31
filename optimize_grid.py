@@ -8,12 +8,13 @@ import os
 from automated_batch_of_simulations import run_batch
 
 
-def best_parameters(results_csv_path):
+def best_parameters(results_csv_path, is_alpha_more_important_than_inittemp):
     results_df = pd.read_csv(results_csv_path)\
         .assign(percent_success=lambda df: -df.evaluation)\
         .drop('evaluation', axis='columns')
     return results_df[results_df.percent_success == results_df.percent_success.max()]\
-        .sort_values(by=['alpha', 'initial_temperature'])\
+        .sort_values(by=['alpha', 'initial_temperature'] if is_alpha_more_important_than_inittemp
+                        else ['initial_temperature', 'alpha'])\
         .iloc[0]
 
 
@@ -85,4 +86,5 @@ if __name__ == '__main__':
     #     run_batch_kwargs=dict(min_set_size=5, max_set_size=61, number_of_pairs=50)
     # )
     # heatmap_of_results('NONE', os.path.join('opt_grid', 'opt_temperature_and_alpha', 'NONE', 'grid_eval.csv'))
-    print(best_parameters(os.path.join('opt_grid', 'opt_temperature_and_alpha', 'ALL', 'grid_eval.csv')))
+    print(best_parameters(os.path.join('opt_grid', 'opt_temperature_and_alpha', 'ALL', 'grid_eval.csv'),
+                          is_alpha_more_important_than_inittemp=False))
