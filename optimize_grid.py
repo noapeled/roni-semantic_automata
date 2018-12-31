@@ -105,7 +105,7 @@ def opt_grid_none():
 
 def opt_grid_exactly():
     optimize_inittemp_and_alpha(
-        quantifier_type='NONE',
+        quantifier_type='EXACTLY',
         alpha_domain=(round(x, 2) for x in np.arange(0.8, 1.0, 0.01)),
         initial_temperature_domain=range(500, 10000, 500),
         threshold=1,
